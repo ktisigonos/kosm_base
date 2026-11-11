@@ -4,13 +4,13 @@
     .fingerprint = 0x3ad1695e08e8959, // Changing this has security and trust implications.
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
+        .kosm_counter_strike = .{
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike?ref=master#cca827e274a70d4f9a86daa85bc03009856ff099",
+            .hash = "kosm_counter_strike-0.0.0-Aru-fdwyAACR6MlSwXMDjbdAzJPcXLlp4x6OEIJy22p4",
+        },
         .kosm_counter_strike_2 = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike_2?ref=master#5fc233a64b0a0866d6cab7cdb88c7b9b3cfa9452",
             .hash = "kosm_counter_strike_2-0.0.0-bRygTHEeAAAKtUUw1vYpFqqdJJgiXv7kxsMGmo0CtSj1",
-        },
-        .kosm_counter_strike_1_6 = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike_1_6?ref=master#51f23457a1f83b0406b8469c2d0c5ca120ce9780",
-            .hash = "kosm_counter_strike_1_6-0.0.0-Iar4jucyAABrArfEdlOuonT01WBmVETOkKrhzyLads1T",
         },
         .kosm_xml = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_xml?ref=master#884b898cfaf808d533639def66072d59b1b3cf1f",

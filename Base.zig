@@ -7,7 +7,7 @@ const std = @import("std");
 const kosm = @import("kosm");
 const kosm_adwsteamgtk = @import("kosm_adwsteamgtk");
 const kosm_blender = @import("kosm_blender");
-const kosm_counter_strike_1_6 = @import("kosm_counter_strike_1_6");
+const kosm_counter_strike = @import("kosm_counter_strike");
 const kosm_counter_strike_2 = @import("kosm_counter_strike_2");
 const kosm_darkreader = @import("kosm_darkreader");
 const kosm_dunst = @import("kosm_dunst");
@@ -35,7 +35,7 @@ adwsteamgtk: ?kosm_adwsteamgtk.App,
 /// Blender's interface theme preset. null: not riced.
 blender: ?kosm_blender.App,
 /// Counter-Strike 1.6's menu colors and font; needs the game's TrackerScheme.res. null: not riced.
-counter_strike_1_6: ?kosm_counter_strike_1_6.App,
+counter_strike: ?kosm_counter_strike.App,
 /// Counter-Strike 2's UI font. null: not riced.
 counter_strike_2: ?kosm_counter_strike_2.App,
 /// Dark Reader's colors; needs its exported settings file. null: not riced.
@@ -84,7 +84,7 @@ pub fn from(theme: kosm.Theme, comptime fonts: Fonts) Base {
     var base: Base = .{
         .adwsteamgtk = kosm_adwsteamgtk.from(theme),
         .blender = kosm_blender.from(theme),
-        .counter_strike_1_6 = kosm_counter_strike_1_6.from(theme),
+        .counter_strike = kosm_counter_strike.from(theme),
         .counter_strike_2 = kosm_counter_strike_2.from(theme),
         .darkreader = kosm_darkreader.from(theme),
         .dunst = kosm_dunst.from(theme),
@@ -105,7 +105,7 @@ pub fn from(theme: kosm.Theme, comptime fonts: Fonts) Base {
         .vicinae = kosm_vicinae.from(theme),
         .zen = kosm_zen.from(theme),
     };
-    base.counter_strike_1_6.?.font = main;
+    base.counter_strike.?.font = main;
     base.counter_strike_2.?.font = main;
     base.dunst.?.global.font = .{ .families = fonts.families, .size = fonts.size };
     base.equibop.?.font = main;
@@ -144,7 +144,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike_1_6, kosm_counter_strike_2, kosm_darkreader, kosm_dunst, kosm_equibop, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_darkreader, kosm_dunst, kosm_equibop, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -231,5 +231,5 @@ test "fonts reach every app that has them" {
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);
-    try testing.expectEqualStrings("Maple Mono", base.counter_strike_1_6.?.font.?);
+    try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
 }

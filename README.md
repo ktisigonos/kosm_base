@@ -21,7 +21,7 @@ A kosmos adding apps of its own returns a struct holding the base and them:
 `struct { base: base.Base, mine: my_app.App }`.
 
 Every field of `Base` is the app of the package of its name (`kitty` is `kosm_kitty.App`), and
-null drops it. Apps that edit a program's own file need that file: `counter_strike_1_6` (the
+null drops it. Apps that edit a program's own file need that file: `counter_strike` (the
 game's TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `ohmyposh` (a
 prompt config with a `palette`), `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and
 `zen` (a profile). Kosm names the app and file when one is missing; set that app to null.
