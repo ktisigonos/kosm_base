@@ -12,7 +12,7 @@ pub fn kosmos() base.Base {
     const palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2e9990") };
     var apps = base.from(.from(palette, .dark), .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 });
     apps.kitty.?.fonts.font_size = 14;
-    apps.cs2 = null;
+    apps.counter_strike_2 = null;
     return apps;
 }
 ```
@@ -21,12 +21,12 @@ A kosmos adding apps of its own returns a struct holding the base and them:
 `struct { base: base.Base, mine: my_app.App }`.
 
 Every field of `Base` is the app of the package of its name (`kitty` is `kosm_kitty.App`), and
-null drops it. Apps that edit a program's own file need that file: `cs16` (the game's
-TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `ohmyposh` (a prompt
-config with a `palette`), `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and `zen`
-(a profile). Kosm names the app and file when one is missing; set that app to null. `cs2`
-and `blender` write into their programs' folders (the game's, Blender's version folder), which
-they create when missing, so drop them on a machine without the program.
+null drops it. Apps that edit a program's own file need that file: `counter_strike_1_6` (the
+game's TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `ohmyposh` (a
+prompt config with a `palette`), `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and
+`zen` (a profile). Kosm names the app and file when one is missing; set that app to null.
+`counter_strike_2` and `blender` write into their programs' folders (the game's, Blender's
+version folder), which they create when missing, so drop them on a machine without the program.
 
 ## Fonts
 
