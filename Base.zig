@@ -195,8 +195,8 @@ pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
 }
 
 /// foot's fonts: every family at the size, in fallback order.
-fn footFonts(comptime fonts: Fonts) []const kosm_foot.App.Font {
-    var list: [fonts.families.len]kosm_foot.App.Font = undefined;
+fn footFonts(comptime fonts: Fonts) []const kosm_foot.App.values.Font {
+    var list: [fonts.families.len]kosm_foot.App.values.Font = undefined;
     for (fonts.families, &list) |family, *font| font.* = .{ .family = family, .size = fonts.size };
     const final = list;
     return &final;

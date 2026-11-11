@@ -97,8 +97,8 @@
             .hash = "kosm_ghostty-0.0.0-l99CQXZlAgDW9JuxxZ4OYnI8ZKBcLXjGDu_hwOplsA4A",
         },
         .kosm_foot = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_foot?ref=master#0bfad236399aa97d2074f4077b727403702ed74d",
-            .hash = "kosm_foot-0.0.0-wAiGi9E9AACosMux2wc0H5mkf9HgGA2QffBexMBddFGc",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_foot?ref=master#a05c13f439451aa958fdefb35c6569b8e6d9d896",
+            .hash = "kosm_foot-0.0.0-wAiGi6MLAQD_xdhDiQRJXL9N_2wbkzedZpcwFRGy-uxC",
         },
         .kosm_fontconfig = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fontconfig?ref=master#1513a152cdc2c156f64f97fbe4306886db18fbf8",
