@@ -1,4 +1,4 @@
-//! The base kosmos: every official app from the theme and the kosmos' fonts.
+//! The base kosmos: the official apps a kosmos chooses, from the theme and its fonts.
 
 const std = @import("std");
 
@@ -6,8 +6,11 @@ const std = @import("std");
 pub const Base = @import("Base.zig");
 /// The fonts the base hands to every app with fonts.
 pub const Fonts = @import("Fonts.zig");
-/// Every app from the theme, with `fonts`.
+/// The chosen apps from the theme, with `fonts`.
 pub const from = Base.from;
+/// Which of the base's apps a kosmos turns on: `.all`, `.none`, `.{ .only = &.{ .kitty } }` or
+/// `.{ .except = &.{ .zen } }`.
+pub const Apps = Base.Apps;
 
 test {
     std.testing.refAllDecls(@This());

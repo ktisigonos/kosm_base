@@ -1,5 +1,5 @@
-//! Every official app, each from the theme with the kosmos' fonts. A kosmos returns this,
-//! after overriding single values and setting the apps it doesn't want to null.
+//! Every official app the kosmos chose, each from the theme with the kosmos' fonts. A kosmos
+//! returns this after overriding single values.
 
 const Base = @This();
 
@@ -75,54 +75,122 @@ vicinae: ?kosm_vicinae.App,
 /// Zen Browser's colors, logo and prefs. null: not riced.
 zen: ?kosm_zen.App,
 
-/// Every app's `from(theme)`, with `fonts` wherever an app has fonts: every family for apps
-/// taking fallbacks, the first for apps taking one, and the size for terminals,
-/// notifications and the launcher.
-pub fn from(theme: kosm.Theme, comptime fonts: Fonts) Base {
+/// One of the base's apps, named as its field.
+pub const App = enum {
+    adwsteamgtk,
+    blender,
+    counter_strike,
+    counter_strike_2,
+    darkreader,
+    dunst,
+    equibop,
+    fontconfig,
+    foot,
+    ghostty,
+    gtk,
+    hyprland,
+    hyprmouse,
+    hyprtoolkit,
+    kde,
+    kitty,
+    nvim,
+    ohmyposh,
+    qtct,
+    tuios,
+    vicinae,
+    zen,
+};
+
+/// Which of the base's apps a kosmos turns on; the others are null and never applied.
+/// A list may name an app twice.
+pub const Apps = union(enum) {
+    /// Every app.
+    all,
+    /// No app; for a kosmos made only of apps of its own.
+    none,
+    /// Only the listed apps.
+    only: []const App,
+    /// Every app but the listed ones.
+    except: []const App,
+
+    /// Whether `app` is on.
+    pub fn has(apps: Apps, app: App) bool {
+        return switch (apps) {
+            .all => true,
+            .none => false,
+            .only => |list| std.mem.findScalar(App, list, app) != null,
+            .except => |list| std.mem.findScalar(App, list, app) == null,
+        };
+    }
+};
+
+comptime {
+    const apps = @typeInfo(App).@"enum".field_names;
+    const fields = @typeInfo(Base).@"struct".field_names;
+    if (apps.len != fields.len) @compileError("Base.App must name every field of Base, in order");
+    for (apps, fields) |app, field| {
+        if (!std.mem.eql(u8, app, field)) @compileError("Base.App must name every field of Base, in order");
+    }
+}
+
+/// The `apps` chosen, each from its `from(theme)`, with `fonts` wherever an app has fonts:
+/// every family for apps taking fallbacks, the first for apps taking one, and the size for
+/// terminals, notifications and the launcher.
+pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
     if (fonts.families.len == 0) @compileError("the base needs at least one font family");
     const main = fonts.families[0];
     var base: Base = .{
-        .adwsteamgtk = kosm_adwsteamgtk.from(theme),
-        .blender = kosm_blender.from(theme),
-        .counter_strike = kosm_counter_strike.from(theme),
-        .counter_strike_2 = kosm_counter_strike_2.from(theme),
-        .darkreader = kosm_darkreader.from(theme),
-        .dunst = kosm_dunst.from(theme),
-        .equibop = kosm_equibop.from(theme),
-        .fontconfig = kosm_fontconfig.from(theme),
-        .foot = kosm_foot.from(theme),
-        .ghostty = kosm_ghostty.from(theme),
-        .gtk = kosm_gtk.from(theme),
-        .hyprland = kosm_hyprland.from(theme),
-        .hyprmouse = kosm_hyprmouse.from(theme),
-        .hyprtoolkit = kosm_hyprtoolkit.from(theme),
-        .kde = kosm_kde.from(theme),
-        .kitty = kosm_kitty.from(theme),
-        .nvim = kosm_nvim.from(theme),
-        .ohmyposh = kosm_ohmyposh.from(theme),
-        .qtct = kosm_qtct.from(theme),
-        .tuios = kosm_tuios.from(theme),
-        .vicinae = kosm_vicinae.from(theme),
-        .zen = kosm_zen.from(theme),
+        .adwsteamgtk = if (apps.has(.adwsteamgtk)) kosm_adwsteamgtk.from(theme) else null,
+        .blender = if (apps.has(.blender)) kosm_blender.from(theme) else null,
+        .counter_strike = if (apps.has(.counter_strike)) kosm_counter_strike.from(theme) else null,
+        .counter_strike_2 = if (apps.has(.counter_strike_2)) kosm_counter_strike_2.from(theme) else null,
+        .darkreader = if (apps.has(.darkreader)) kosm_darkreader.from(theme) else null,
+        .dunst = if (apps.has(.dunst)) kosm_dunst.from(theme) else null,
+        .equibop = if (apps.has(.equibop)) kosm_equibop.from(theme) else null,
+        .fontconfig = if (apps.has(.fontconfig)) kosm_fontconfig.from(theme) else null,
+        .foot = if (apps.has(.foot)) kosm_foot.from(theme) else null,
+        .ghostty = if (apps.has(.ghostty)) kosm_ghostty.from(theme) else null,
+        .gtk = if (apps.has(.gtk)) kosm_gtk.from(theme) else null,
+        .hyprland = if (apps.has(.hyprland)) kosm_hyprland.from(theme) else null,
+        .hyprmouse = if (apps.has(.hyprmouse)) kosm_hyprmouse.from(theme) else null,
+        .hyprtoolkit = if (apps.has(.hyprtoolkit)) kosm_hyprtoolkit.from(theme) else null,
+        .kde = if (apps.has(.kde)) kosm_kde.from(theme) else null,
+        .kitty = if (apps.has(.kitty)) kosm_kitty.from(theme) else null,
+        .nvim = if (apps.has(.nvim)) kosm_nvim.from(theme) else null,
+        .ohmyposh = if (apps.has(.ohmyposh)) kosm_ohmyposh.from(theme) else null,
+        .qtct = if (apps.has(.qtct)) kosm_qtct.from(theme) else null,
+        .tuios = if (apps.has(.tuios)) kosm_tuios.from(theme) else null,
+        .vicinae = if (apps.has(.vicinae)) kosm_vicinae.from(theme) else null,
+        .zen = if (apps.has(.zen)) kosm_zen.from(theme) else null,
     };
-    base.counter_strike.?.font = main;
-    base.counter_strike_2.?.font = main;
-    base.dunst.?.global.font = .{ .families = fonts.families, .size = fonts.size };
-    base.equibop.?.font = main;
-    base.fontconfig.?.sans_serif = fonts.families;
-    base.fontconfig.?.serif = fonts.families;
-    base.fontconfig.?.monospace = fonts.families;
-    base.foot.?.main.font = comptime footFonts(fonts);
-    base.ghostty.?.font_family = fonts.families;
-    base.ghostty.?.font_size = fonts.size;
-    base.hyprland.?.misc.font_family = comptime pangoFamilies(fonts.families);
-    base.hyprmouse.?.font = main;
-    base.hyprtoolkit.?.font_family = main;
-    base.hyprtoolkit.?.font_family_monospace = main;
-    base.kitty.?.fonts.font_family = .{ .family = main };
-    base.kitty.?.fonts.font_size = fonts.size;
-    base.vicinae.?.font_family = main;
-    base.vicinae.?.font_size = fonts.size;
+    if (base.counter_strike) |*counter_strike| counter_strike.font = main;
+    if (base.counter_strike_2) |*counter_strike_2| counter_strike_2.font = main;
+    if (base.dunst) |*dunst| dunst.global.font = .{ .families = fonts.families, .size = fonts.size };
+    if (base.equibop) |*equibop| equibop.font = main;
+    if (base.fontconfig) |*fontconfig| {
+        fontconfig.sans_serif = fonts.families;
+        fontconfig.serif = fonts.families;
+        fontconfig.monospace = fonts.families;
+    }
+    if (base.foot) |*foot| foot.main.font = comptime footFonts(fonts);
+    if (base.ghostty) |*ghostty| {
+        ghostty.font_family = fonts.families;
+        ghostty.font_size = fonts.size;
+    }
+    if (base.hyprland) |*hyprland| hyprland.misc.font_family = comptime pangoFamilies(fonts.families);
+    if (base.hyprmouse) |*hyprmouse| hyprmouse.font = main;
+    if (base.hyprtoolkit) |*hyprtoolkit| {
+        hyprtoolkit.font_family = main;
+        hyprtoolkit.font_family_monospace = main;
+    }
+    if (base.kitty) |*kitty| {
+        kitty.fonts.font_family = .{ .family = main };
+        kitty.fonts.font_size = fonts.size;
+    }
+    if (base.vicinae) |*vicinae| {
+        vicinae.font_family = main;
+        vicinae.font_size = fonts.size;
+    }
     return base;
 }
 
@@ -177,35 +245,45 @@ const scheme_colors = blk: {
     break :blk lines;
 };
 
-test "a kosmos of a palette and two overrides rices every app through the base" {
-    var tmp = testing.tmpDir(.{});
-    defer tmp.cleanup();
-    for (existing) |file| {
-        if (std.fs.path.dirname(file[0])) |directory| try tmp.dir.createDirPath(testing.io, directory);
-        try tmp.dir.writeFile(testing.io, .{ .sub_path = file[0], .data = file[1] });
+/// The files a kosmos built on the base plans, in a temp home holding the files apps edit.
+const Planned = struct {
+    tmp: testing.TmpDir,
+    arena: std.heap.ArenaAllocator,
+    plan: kosm.Plan,
+
+    fn deinit(planned: *Planned) void {
+        planned.plan.deinit();
+        planned.arena.deinit();
+        planned.tmp.cleanup();
     }
-    var home_buffer: [std.Io.Dir.max_path_bytes]u8 = undefined;
-    var arena: std.heap.ArenaAllocator = .init(testing.allocator);
-    defer arena.deinit();
-    var plan: kosm.Plan = .init(testing.allocator, testing.io);
-    defer plan.deinit();
+
+    fn has(planned: *const Planned, display_path: []const u8) bool {
+        for (planned.plan.files.items) |file| {
+            if (std.mem.eql(u8, file.display_path, display_path)) return true;
+        }
+        return false;
+    }
+};
+
+fn planOf(kosmos: Base, planned: *Planned) !void {
+    planned.* = .{ .tmp = testing.tmpDir(.{}), .arena = .init(testing.allocator), .plan = .init(testing.allocator, testing.io) };
+    errdefer planned.deinit();
+    for (existing) |file| {
+        if (std.fs.path.dirname(file[0])) |directory| try planned.tmp.dir.createDirPath(testing.io, directory);
+        try planned.tmp.dir.writeFile(testing.io, .{ .sub_path = file[0], .data = file[1] });
+    }
+    const home_buffer = try planned.arena.allocator().alloc(u8, std.Io.Dir.max_path_bytes);
     var diagnostics: kosm.Diagnostics = .{};
-    var warnings: kosm.Warnings = .init(arena.allocator());
+    var warnings: kosm.Warnings = .init(planned.arena.allocator());
     var output: kosm.Output = .{
-        .allocator = arena.allocator(),
-        .home = home_buffer[0..try tmp.dir.realPath(testing.io, &home_buffer)],
+        .allocator = planned.arena.allocator(),
+        .home = home_buffer[0..try planned.tmp.dir.realPath(testing.io, home_buffer)],
         .adapters = adapters,
-        .plan = &plan,
+        .plan = &planned.plan,
         .diagnostics = &diagnostics,
         .warnings = &warnings,
         .app = "",
     };
-
-    const palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2e9990") };
-    var kosmos = from(kosm.Theme.from(palette, .dark), .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 });
-    kosmos.kitty.?.fonts.font_size = 14;
-    kosmos.counter_strike_2 = null;
-
     inline for (@typeInfo(Base).@"struct".field_names) |name| {
         if (@field(kosmos, name)) |app| {
             output.app = name;
@@ -215,18 +293,51 @@ test "a kosmos of a palette and two overrides rices every app through the base" 
             };
         }
     }
-    var riced: std.ArrayList([]const u8) = .empty;
-    for (plan.files.items) |file| try riced.append(arena.allocator(), file.display_path);
-    try testing.expect(plan.files.items.len >= @typeInfo(Base).@"struct".field_names.len - 1);
-    for (plan.files.items) |file| {
+}
+
+const test_palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2e9990") };
+const test_fonts: Fonts = .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 };
+
+test "a kosmos of a palette and two overrides rices every app through the base" {
+    var kosmos = from(.from(test_palette, .dark), test_fonts, .{ .except = &.{.counter_strike_2} });
+    kosmos.kitty.?.fonts.font_size = 14;
+    var planned: Planned = undefined;
+    try planOf(kosmos, &planned);
+    defer planned.deinit();
+
+    try testing.expect(planned.plan.files.items.len >= @typeInfo(Base).@"struct".field_names.len - 1);
+    for (planned.plan.files.items) |file| {
         if (std.mem.eql(u8, file.display_path, "~/.config/kitty/kosm.conf"))
             try testing.expect(std.mem.indexOf(u8, file.new, "font_size 14\n") != null);
         try testing.expect(std.mem.indexOf(u8, file.display_path, "42-repl-global") == null);
     }
 }
 
+test "a kosmos enabling two apps plans only their files" {
+    const kosmos = from(.from(test_palette, .dark), test_fonts, .{ .only = &.{ .kitty, .ghostty, .kitty } });
+    var planned: Planned = undefined;
+    try planOf(kosmos, &planned);
+    defer planned.deinit();
+
+    try testing.expectEqual(2, planned.plan.files.items.len);
+    try testing.expect(planned.has("~/.config/kitty/kosm.conf"));
+    try testing.expect(planned.has("~/.config/ghostty/kosm"));
+}
+
+test "apps left out are null" {
+    const all = from(.from(test_palette, .dark), test_fonts, .all);
+    const none = from(.from(test_palette, .dark), test_fonts, .none);
+    const except = from(.from(test_palette, .dark), test_fonts, .{ .except = &.{ .zen, .kitty } });
+    inline for (@typeInfo(Base).@"struct".field_names) |name| {
+        try testing.expect(@field(all, name) != null);
+        try testing.expect(@field(none, name) == null);
+        const left_out = comptime std.mem.eql(u8, name, "zen") or std.mem.eql(u8, name, "kitty");
+        try testing.expectEqual(left_out, @field(except, name) == null);
+    }
+}
+
 test "fonts reach every app that has them" {
-    const base = from(kosm.Theme.from(.{ .black = kosm.hex("000000"), .white = kosm.hex("ffffff") }, .dark), .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 });
+    const base = from(kosm.Theme.from(.{ .black = kosm.hex("000000"), .white = kosm.hex("ffffff") }, .dark), test_fonts, .all);
     try testing.expectEqualStrings("Maple Mono, Noto Sans", base.hyprland.?.misc.font_family.?);
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
