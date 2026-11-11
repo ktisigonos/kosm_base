@@ -45,7 +45,8 @@ version folder), which they create when missing, so leave them out on a machine 
 `from(theme, fonts, apps)` hands `fonts` to every app with fonts: all families to the apps taking
 fallbacks (fontconfig, ghostty, foot, dunst, Hyprland), the first to the rest (kitty, Vicinae,
 hyprtoolkit, hyprmouse, Equibop, Counter-Strike 1.6 and 2), and the size to terminals,
-notifications and the launcher. `fonts` is known at compile time, written as a literal.
+notifications and the launcher. GTK gets the first family at the size as its interface,
+monospace and document font (`Maple Mono 13`). `fonts` is known at compile time, written as a literal.
 
 | Field | Meaning |
 |---|---|

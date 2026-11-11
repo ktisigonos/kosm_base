@@ -135,7 +135,7 @@ comptime {
 
 /// The `apps` chosen, each from its `from(theme)`, with `fonts` wherever an app has fonts:
 /// every family for apps taking fallbacks, the first for apps taking one, and the size for
-/// terminals, notifications and the launcher.
+/// terminals, notifications, the launcher and GTK.
 pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
     if (fonts.families.len == 0) @compileError("the base needs at least one font family");
     const main = fonts.families[0];
@@ -176,6 +176,12 @@ pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
     if (base.ghostty) |*ghostty| {
         ghostty.font_family = fonts.families;
         ghostty.font_size = fonts.size;
+    }
+    if (base.gtk) |*gtk| {
+        const font = comptime std.fmt.comptimePrint("{s} {d}", .{ main, fonts.size });
+        gtk.settings.gtk_font_name = font;
+        gtk.settings.monospace_font_name = font;
+        gtk.settings.document_font_name = font;
     }
     if (base.hyprland) |*hyprland| hyprland.misc.font_family = comptime pangoFamilies(fonts.families);
     if (base.hyprmouse) |*hyprmouse| hyprmouse.font = main;
