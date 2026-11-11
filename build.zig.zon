@@ -89,8 +89,8 @@
             .hash = "kosm_hyprland-0.0.0-C-ylsxdJAwAZzhTZJ41K9Bfl2_Nzk7IITv2slvLUI8Ef",
         },
         .kosm_gtk = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_gtk?ref=master#a20fa8a8c97c486f2c5c2bcf001635ebc92b4a28",
-            .hash = "kosm_gtk-0.0.0-4gGwZkTJAACfZSiQG3wbCzSt03mWncifjuCZfuB0hHDG",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_gtk?ref=master#6b3fc92718d1b3f15ceb27f3df9efdb4f9d4e766",
+            .hash = "kosm_gtk-0.0.0-4gGwZrHJAAB2QHY2cahKcm7eQOWg85ZEl_hUD9dny-uI",
         },
         .kosm_ghostty = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ghostty?ref=master#3a8958623a8db904d0f46af18e5bb67699069070",
