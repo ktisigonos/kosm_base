@@ -24,7 +24,9 @@ Every field of `Base` is the app of the package of its name (`kitty` is `kosm_ki
 null drops it. Apps that edit a program's own file need that file: `cs16` (the game's
 TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `ohmyposh` (a prompt
 config with a `palette`), `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and `zen`
-(a profile). Kosm names the app and file when one is missing; set that app to null.
+(a profile). Kosm names the app and file when one is missing; set that app to null. `cs2`
+and `blender` write into their programs' folders (the game's, Blender's version folder), which
+they create when missing, so drop them on a machine without the program.
 
 ## Fonts
 
