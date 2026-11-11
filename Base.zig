@@ -283,6 +283,7 @@ fn planOf(kosmos: Base, planned: *Planned) !void {
         .diagnostics = &diagnostics,
         .warnings = &warnings,
         .app = "",
+        .kosmos = "krystallos",
     };
     inline for (@typeInfo(Base).@"struct".field_names) |name| {
         if (@field(kosmos, name)) |app| {
@@ -310,6 +311,23 @@ test "a kosmos of a palette and two overrides rices every app through the base" 
         if (std.mem.eql(u8, file.display_path, "~/.config/kitty/kosm.conf"))
             try testing.expect(std.mem.indexOf(u8, file.new, "font_size 14\n") != null);
         try testing.expect(std.mem.indexOf(u8, file.display_path, "42-repl-global") == null);
+    }
+}
+
+test "the theme's name and file naming reach the apps whose programs pick files by name" {
+    var theme: kosm.Theme = .from(test_palette, .dark);
+    theme.name = "Krystallos";
+    theme.files = .per_kosmos;
+    const kosmos = from(theme, test_fonts, .{ .only = &.{ .kde, .blender } });
+    var planned: Planned = undefined;
+    try planOf(kosmos, &planned);
+    defer planned.deinit();
+
+    try testing.expect(planned.has("~/.local/share/color-schemes/krystallos.colors"));
+    try testing.expect(planned.has("~/.config/blender/5.2/scripts/presets/interface_theme/krystallos.xml"));
+    for (planned.plan.files.items) |file| {
+        if (std.mem.endsWith(u8, file.display_path, ".colors"))
+            try testing.expect(std.mem.indexOf(u8, file.new, "Name=Krystallos\n") != null);
     }
 }
 
