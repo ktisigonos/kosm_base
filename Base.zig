@@ -308,7 +308,7 @@ const test_palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm
 const test_fonts: Fonts = .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 };
 
 test "a kosmos of a palette and two overrides rices every app through the base" {
-    var kosmos = from(.from(test_palette, .dark), test_fonts, .{ .except = &.{.counter_strike_2} });
+    var kosmos = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .except = &.{.counter_strike_2} });
     kosmos.kitty.?.fonts.font_size = 14;
     var planned: Planned = undefined;
     try planOf(kosmos, &planned);
@@ -323,7 +323,7 @@ test "a kosmos of a palette and two overrides rices every app through the base" 
 }
 
 test "the theme's name and file naming reach the apps whose programs pick files by name" {
-    var theme: kosm.Theme = .from(test_palette, .dark);
+    var theme: kosm.Theme = .from(.{ .palette = test_palette, .mode = .dark });
     theme.name = "Krystallos";
     theme.files = .per_kosmos;
     const kosmos = from(theme, test_fonts, .{ .only = &.{ .kde, .blender } });
@@ -340,7 +340,7 @@ test "the theme's name and file naming reach the apps whose programs pick files 
 }
 
 test "a kosmos enabling two apps plans only their files" {
-    const kosmos = from(.from(test_palette, .dark), test_fonts, .{ .only = &.{ .kitty, .ghostty, .kitty } });
+    const kosmos = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .only = &.{ .kitty, .ghostty, .kitty } });
     var planned: Planned = undefined;
     try planOf(kosmos, &planned);
     defer planned.deinit();
@@ -351,9 +351,9 @@ test "a kosmos enabling two apps plans only their files" {
 }
 
 test "apps left out are null" {
-    const all = from(.from(test_palette, .dark), test_fonts, .all);
-    const none = from(.from(test_palette, .dark), test_fonts, .none);
-    const except = from(.from(test_palette, .dark), test_fonts, .{ .except = &.{ .zen, .kitty } });
+    const all = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .all);
+    const none = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .none);
+    const except = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .except = &.{ .zen, .kitty } });
     inline for (@typeInfo(Base).@"struct".field_names) |name| {
         try testing.expect(@field(all, name) != null);
         try testing.expect(@field(none, name) == null);
@@ -363,7 +363,7 @@ test "apps left out are null" {
 }
 
 test "fonts reach every app that has them" {
-    const base = from(kosm.Theme.from(.{ .black = kosm.hex("000000"), .white = kosm.hex("ffffff") }, .dark), test_fonts, .all);
+    const base = from(kosm.Theme.from(.{ .palette = .{ .black = kosm.hex("000000"), .white = kosm.hex("ffffff") }, .mode = .dark }), test_fonts, .all);
     try testing.expectEqualStrings("Maple Mono, Noto Sans", base.hyprland.?.misc.font_family.?);
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
