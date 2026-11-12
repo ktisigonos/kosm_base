@@ -45,8 +45,8 @@
             .hash = "kosm_css-0.0.0-oGvx3AUZAAB3d6Mm_oSrGXFiOXPc8oJ9YcDPW3lFIwvF",
         },
         .kosm_zen = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#025322735ff89ac9c757730b68492af2eaf1d7ca",
-            .hash = "kosm_zen-0.0.0-PJSR5OdYAQDmpOliohaiSEoD9pp_H8PONnosBOsTs_Gz",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#540bee206bb904910a75081cad3c3d2923f7f5a7",
+            .hash = "kosm_zen-0.0.0-PJSR5IxbAQBlpffWV3rIyLhHjqzwd5bPLJ84xezfqjjd",
         },
         .kosm_vicinae = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#cb2c8fee5725631385da2601d5170d5696a5da37",
@@ -113,8 +113,8 @@
             .hash = "kosm_dunst-0.0.0-bFXk7dAyAABZr2IDv0q7rXGjWyOt3E8an0I30tc7tZ-Z",
         },
         .kosm_firefox = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#270088fcfad7f1a90d994f6e58dc3b35ca3d5b41",
-            .hash = "kosm_firefox-0.0.0-UE8nmL8gBgB5a04ZQYloyR4E_jMc3EUIvOxMZJOXrCof",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#a2d748b3b74e9639f283ad1ebc767474adee29d8",
+            .hash = "kosm_firefox-0.0.0-UE8nmNokBgDNhMwOGhh09sO6pXWLulmiBmHRsdtddTZU",
         },
         .kosm_blender = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#a8c376fcdc2e9ca48eef08b077c67349800062da",
