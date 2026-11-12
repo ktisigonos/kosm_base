@@ -9,7 +9,7 @@ const base = @import("kosm_base");
 
 pub fn kosmos() base.Base {
     const palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2e9990") };
-    var apps = base.from(.from(palette, .dark), .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 }, .{ .except = &.{.counter_strike_2} });
+    var apps = base.from(.from(.{ .palette = palette, .mode = .dark }), .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 }, .{ .except = &.{.counter_strike_2} });
     apps.kitty.?.fonts.font_size = 14;
     return apps;
 }
