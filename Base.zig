@@ -295,6 +295,7 @@ const existing = [_]struct { []const u8, []const u8 }{
     .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\n" },
     .{ ".config/tuios/config.toml", "[appearance]\ntheme = \"default\"\n" },
     .{ ".zen/test.Default/prefs.js", "user_pref(\"browser.startup.page\", 3);\n" },
+    .{ ".zen/test.Default/zen-themes.json", "{\"kosm\": {\"id\": \"kosm\", \"preferences\": \"preferences.json\", \"enabled\": true}}\n" },
     // Blender writes its theme into every version it has run, found by its config files.
     .{ ".config/blender/5.2/config/bookmarks.txt", "" },
     .{ ".config/vicinae/settings.json", "{\"font\": {\"normal\": {\"family\": \"auto\", \"size\": 10.5}}, \"theme\": {\"dark\": {\"name\": \"vicinae-dark\"}}}\n" },

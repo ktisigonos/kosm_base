@@ -46,7 +46,7 @@ The names are `Base`'s fields (the enum `base.Base.App`); naming one twice is fi
 
 Apps that edit a program's own file need that file: `counter_strike` (the
 game's TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and
-`zen` (a profile). Kosm names the app and file when one is missing; leave that app out.
+`zen` (a profile, with the kosm mod's entry in its `zen-themes.json`). Kosm names the app and file when one is missing; leave that app out.
 `counter_strike_2` and `blender` write into their programs' folders (the game's, Blender's
 version folder), which they create when missing, so leave them out on a machine without the program.
 `fastfetch` owns `~/.config/fastfetch/config.jsonc` whole and replaces one written by hand, so lay
