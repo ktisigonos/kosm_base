@@ -69,7 +69,7 @@ kde: ?kosm_kde.App,
 kitty: ?kosm_kitty.App,
 /// Neovim's base16 colors. null: not riced.
 nvim: ?kosm_nvim.App,
-/// oh-my-posh's palette; needs a prompt config with a `palette`. null: not riced.
+/// Oh My Posh's whole prompt config: its layout and palette. null: not riced.
 ohmyposh: ?kosm_ohmyposh.App,
 /// qt5ct's and qt6ct's color schemes; needs their configs. null: not riced.
 qtct: ?kosm_qtct.App,
@@ -291,7 +291,6 @@ const existing = [_]struct { []const u8, []const u8 }{
     .{ ".local/share/Steam/steamapps/common/Half-Life/valve/resource/TrackerScheme.res", "Scheme\n{\n\tColors\n\t{\n" ++ scheme_colors ++ "\t}\n\tFonts\n\t{\n\t\t\"Default\" { \"1\" { \"name\" \"Tahoma\" } }\n\t}\n}\n" },
     .{ ".config/darkreader/Dark-Reader-Settings.json", "{\"theme\": {\"darkSchemeBackgroundColor\": \"#181a1b\", \"darkSchemeTextColor\": \"#e8e6e3\", \"lightSchemeBackgroundColor\": \"#dcdad7\", \"lightSchemeTextColor\": \"#181a1b\", \"selectionColor\": \"auto\", \"scrollbarColor\": \"auto\"}}\n" },
     .{ ".config/hypr/hyprmouse.conf", "font = Sans\nfont_size = 25\nbackground_color = #000000\ngrid_color = #000000\ndot_color = #000000\ntext_color = #000000\ntext_outline_color = #000000\nbackground_opacity = 1\n" },
-    .{ ".config/oh-my-posh/config.json", "{\"palette\": {}}\n" },
     .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\n" },
     .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\n" },
     .{ ".config/tuios/config.toml", "[appearance]\ntheme = \"default\"\n" },

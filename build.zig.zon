@@ -61,8 +61,8 @@
             .hash = "kosm_qtct-0.0.0-7kQIactEAAABMGX6cgiHPgdaBjnWHJps94X_FBZg02cT",
         },
         .kosm_ohmyposh = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ohmyposh?ref=master#4aadf4cd46b5e42be937451d5a29f8e903752139",
-            .hash = "kosm_ohmyposh-0.0.0-asUeM4UpAACltPA7r-BPFMQmR_GhU-k5HwV5GYMBDMDr",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ohmyposh?ref=master#c59032afd268f28d270f0419dedd3687efc1fb99",
+            .hash = "kosm_ohmyposh-0.0.0-asUeM7llAAB7UHx-ZGNvD8WXE5cph5Y3wirjdbWTyZSI",
         },
         .kosm_nvim = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_nvim?ref=master#e37599918bca891d5dde197f1e462cb1f7679f05",
