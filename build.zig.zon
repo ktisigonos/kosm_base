@@ -73,8 +73,8 @@
             .hash = "kosm_kitty-0.0.0-gr3WQkUwAgA2ht48lRg5Na7wjfsy22dcZD6nGEz387zJ",
         },
         .kosm_kde = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kde?ref=master#b56f8d0658ac1991340239e00160a27400eb3cba",
-            .hash = "kosm_kde-0.0.0-EC3JD_hbAAC5NwxQM6pGntyksLYaI0dMrIVPtKrnq8C2",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kde?ref=master#c30e923c2f6daa8412911bbc069b0b9fd8fe5905",
+            .hash = "kosm_kde-0.0.0-EC3JD2dcAACE8Tq8BJ0vNxBaYkQ0TlmaJvlNOCQnnq9A",
         },
         .kosm_hyprtoolkit = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprtoolkit?ref=master#2e11f58de66b370c59f3e0b594f76bd22f9f1815",
