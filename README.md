@@ -51,8 +51,8 @@ game's TrackerScheme.res), `darkreader` (its exported settings), `hyprmouse`, `q
 version folder), which they create when missing, so leave them out on a machine without the program.
 `fastfetch` owns `~/.config/fastfetch/config.jsonc` whole and replaces one written by hand, so lay
 fastfetch out through the app's fields (`kosm_fastfetch`'s README) or leave it out. `ohmyposh`
-owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at it
-(`kosm_ohmyposh`'s README).
+owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at it, and run
+`oh-my-posh enable reload` once so open shells follow an apply (`kosm_ohmyposh`'s README).
 
 ## Fonts
 
