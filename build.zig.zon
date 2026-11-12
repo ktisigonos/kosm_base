@@ -135,6 +135,8 @@
         "root.zig",
         "Base.zig",
         "Fonts.zig",
+        "Look.zig",
+        "Values.zig",
         "README.md",
     },
 }

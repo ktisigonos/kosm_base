@@ -1,5 +1,5 @@
-//! Every official app the kosmos chose, each from the theme with the kosmos' fonts. A kosmos
-//! returns this after overriding single values.
+//! Every official app the kosmos chose, each from a look's theme with its fonts and shared
+//! values. A kosmos returns this after overriding single values.
 
 const Base = @This();
 
@@ -29,6 +29,8 @@ const kosm_vicinae = @import("kosm_vicinae");
 const kosm_zen = @import("kosm_zen");
 
 const Fonts = @import("Fonts.zig");
+const Look = @import("Look.zig");
+const Values = @import("Values.zig");
 
 /// Steam's custom CSS for its Adwaita skin. null: not riced.
 adwsteamgtk: ?kosm_adwsteamgtk.App,
@@ -133,10 +135,13 @@ comptime {
     }
 }
 
-/// The `apps` chosen, each from its `from(theme)`, with `fonts` wherever an app has fonts:
-/// every family for apps taking fallbacks, the first for apps taking one, and the size for
-/// terminals, notifications, the launcher and GTK.
-pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
+/// The `apps` chosen, each from its `from(look.theme)`, with the look's fonts wherever an app
+/// has fonts (every family for apps taking fallbacks, the first for apps taking one, and the
+/// size for terminals, notifications, the launcher and GTK) and each of its values set in
+/// every app having that setting; then the look's tweak.
+pub fn from(comptime look: Look, apps: Apps) Base {
+    const theme = look.theme;
+    const fonts = look.fonts;
     if (fonts.families.len == 0) @compileError("the base needs at least one font family");
     const main = fonts.families[0];
     var base: Base = .{
@@ -197,7 +202,53 @@ pub fn from(theme: kosm.Theme, comptime fonts: Fonts, apps: Apps) Base {
         vicinae.font_family = main;
         vicinae.font_size = fonts.size;
     }
+    base.setValues(look.values);
+    if (look.tweak) |tweak| tweak(&base, look);
     return base;
+}
+
+/// Sets each value that is not null in every app having that setting.
+fn setValues(base: *Base, values: Values) void {
+    if (base.ghostty) |*ghostty| if (values.padding) |padding| {
+        ghostty.window_padding_x = .all(padding);
+        ghostty.window_padding_y = .all(padding);
+    };
+    if (base.foot) |*foot| if (values.padding) |padding| {
+        foot.main.pad = .all(padding);
+    };
+    if (base.kitty) |*kitty| {
+        if (values.padding) |padding| kitty.window.window_padding_width = .all(@floatFromInt(padding));
+        if (values.editor) |editor| kitty.advanced.editor = editor;
+    }
+    if (base.gtk) |*gtk| {
+        if (values.icon_theme) |icon_theme| gtk.settings.gtk_icon_theme_name = icon_theme;
+        if (values.cursor.name) |name| gtk.settings.gtk_cursor_theme_name = name;
+        if (values.cursor.size) |size| gtk.settings.gtk_cursor_theme_size = size;
+    }
+    if (base.hyprtoolkit) |*hyprtoolkit| {
+        if (values.icon_theme) |icon_theme| hyprtoolkit.icon_theme = icon_theme;
+        if (values.rounding) |rounding| {
+            hyprtoolkit.rounding_large = rounding;
+            hyprtoolkit.rounding_small = rounding / 2;
+        }
+    }
+    if (base.zen) |*zen| if (zen.profile) |*profile| if (values.rounding) |rounding| {
+        profile.prefs.zen.theme.border_radius = @intCast(rounding);
+    };
+    if (base.hyprland) |*hyprland| setHyprland(hyprland, values);
+}
+
+fn setHyprland(hyprland: *kosm_hyprland.App, values: Values) void {
+    if (values.border_size) |size| hyprland.general.border_size = size;
+    if (values.gaps.inner) |inner| hyprland.general.gaps_in = .all(inner);
+    if (values.gaps.outer) |outer| hyprland.general.gaps_out = .all(outer);
+    if (values.rounding) |rounding| hyprland.decoration.rounding = rounding;
+    if (values.rounding_power) |power| hyprland.decoration.rounding_power = power;
+    if (values.shadow.range) |range| hyprland.decoration.shadow.range = range;
+    if (values.shadow.render_power) |power| hyprland.decoration.shadow.render_power = power;
+    if (values.cursor.name) |name| hyprland.cursor_theme = name;
+    if (values.cursor.size) |size| hyprland.cursor_size = size;
+    if (values.keyboard) |keyboard| hyprland.keyboard = keyboard;
 }
 
 /// foot's fonts: every family at the size, in fallback order.
@@ -306,9 +357,10 @@ fn planOf(kosmos: Base, planned: *Planned) !void {
 
 const test_palette: kosm.Palette = .{ .black = kosm.hex("041c26"), .white = kosm.hex("a3c5cc"), .cyan = kosm.hex("2e9990") };
 const test_fonts: Fonts = .{ .families = &.{ "Maple Mono", "Noto Sans" }, .size = 13 };
+const test_look: Look = .{ .theme = .from(.{ .palette = test_palette, .mode = .dark }), .fonts = test_fonts };
 
 test "a kosmos of a palette and two overrides rices every app through the base" {
-    var kosmos = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .except = &.{.counter_strike_2} });
+    var kosmos = from(test_look, .{ .except = &.{.counter_strike_2} });
     kosmos.kitty.?.fonts.font_size = 14;
     var planned: Planned = undefined;
     try planOf(kosmos, &planned);
@@ -323,10 +375,13 @@ test "a kosmos of a palette and two overrides rices every app through the base" 
 }
 
 test "the theme's name and file naming reach the apps whose programs pick files by name" {
-    var theme: kosm.Theme = .from(.{ .palette = test_palette, .mode = .dark });
-    theme.name = "Krystallos";
-    theme.files = .per_kosmos;
-    const kosmos = from(theme, test_fonts, .{ .only = &.{ .kde, .blender } });
+    const named: Look = comptime blk: {
+        var look = test_look;
+        look.theme.name = "Krystallos";
+        look.theme.files = .per_kosmos;
+        break :blk look;
+    };
+    const kosmos = from(named, .{ .only = &.{ .kde, .blender } });
     var planned: Planned = undefined;
     try planOf(kosmos, &planned);
     defer planned.deinit();
@@ -340,7 +395,7 @@ test "the theme's name and file naming reach the apps whose programs pick files 
 }
 
 test "a kosmos enabling two apps plans only their files" {
-    const kosmos = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .only = &.{ .kitty, .ghostty, .kitty } });
+    const kosmos = from(test_look, .{ .only = &.{ .kitty, .ghostty, .kitty } });
     var planned: Planned = undefined;
     try planOf(kosmos, &planned);
     defer planned.deinit();
@@ -351,9 +406,9 @@ test "a kosmos enabling two apps plans only their files" {
 }
 
 test "apps left out are null" {
-    const all = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .all);
-    const none = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .none);
-    const except = from(.from(.{ .palette = test_palette, .mode = .dark }), test_fonts, .{ .except = &.{ .zen, .kitty } });
+    const all = from(test_look, .all);
+    const none = from(test_look, .none);
+    const except = from(test_look, .{ .except = &.{ .zen, .kitty } });
     inline for (@typeInfo(Base).@"struct".field_names) |name| {
         try testing.expect(@field(all, name) != null);
         try testing.expect(@field(none, name) == null);
@@ -363,10 +418,105 @@ test "apps left out are null" {
 }
 
 test "fonts reach every app that has them" {
-    const base = from(kosm.Theme.from(.{ .palette = .{ .black = kosm.hex("000000"), .white = kosm.hex("ffffff") }, .mode = .dark }), test_fonts, .all);
+    const base = from(test_look, .all);
     try testing.expectEqualStrings("Maple Mono, Noto Sans", base.hyprland.?.misc.font_family.?);
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
+}
+
+test "each shared value reaches every app having that setting" {
+    const look: Look = comptime blk: {
+        var look = test_look;
+        look.values = .{
+            .border_size = 2,
+            .rounding = 12,
+            .rounding_power = 3,
+            .gaps = .{ .inner = 4, .outer = 8 },
+            .padding = 10,
+            .shadow = .{ .range = 15, .render_power = 3 },
+            .cursor = .{ .name = "Bibata", .size = 24 },
+            .icon_theme = "Papirus",
+            .keyboard = .{ .layouts = &.{.{ .layout = "us" }} },
+            .editor = "nvim",
+        };
+        break :blk look;
+    };
+    const base = from(look, .all);
+    const hyprland = base.hyprland.?;
+    try testing.expectEqual(2, hyprland.general.border_size.?);
+    try testing.expectEqual(kosm_hyprland.values.CssGap.all(4), hyprland.general.gaps_in.?);
+    try testing.expectEqual(kosm_hyprland.values.CssGap.all(8), hyprland.general.gaps_out.?);
+    try testing.expectEqual(12, hyprland.decoration.rounding.?);
+    try testing.expectEqual(3, hyprland.decoration.rounding_power.?);
+    try testing.expectEqual(15, hyprland.decoration.shadow.range.?);
+    try testing.expectEqual(3, hyprland.decoration.shadow.render_power.?);
+    try testing.expectEqualStrings("Bibata", hyprland.cursor_theme.?);
+    try testing.expectEqual(24, hyprland.cursor_size.?);
+    try testing.expectEqualStrings("us", hyprland.keyboard.?.layouts[0].layout);
+    try testing.expectEqual(12, base.hyprtoolkit.?.rounding_large.?);
+    try testing.expectEqual(6, base.hyprtoolkit.?.rounding_small.?);
+    try testing.expectEqualStrings("Papirus", base.hyprtoolkit.?.icon_theme.?);
+    try testing.expectEqual(12, base.zen.?.profile.?.prefs.zen.theme.border_radius.?);
+    try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_x.?);
+    try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_y.?);
+    try testing.expectEqual(kosm_foot.App.values.Pad.all(10), base.foot.?.main.pad.?);
+    try testing.expectEqual(kosm_kitty.values.Edges.all(10), base.kitty.?.window.window_padding_width.?);
+    try testing.expectEqualStrings("nvim", base.kitty.?.advanced.editor.?);
+    try testing.expectEqualStrings("Papirus", base.gtk.?.settings.gtk_icon_theme_name.?);
+    try testing.expectEqualStrings("Bibata", base.gtk.?.settings.gtk_cursor_theme_name.?);
+    try testing.expectEqual(24, base.gtk.?.settings.gtk_cursor_theme_size.?);
+}
+
+test "values left null leave every app's setting unwritten" {
+    const base = from(test_look, .all);
+    try testing.expectEqual(null, base.hyprland.?.general.border_size);
+    try testing.expectEqual(null, base.hyprland.?.cursor_theme);
+    try testing.expectEqual(null, base.kitty.?.window.window_padding_width);
+    try testing.expectEqual(null, base.gtk.?.settings.gtk_icon_theme_name);
+}
+
+fn testTweak(base: *Base, look: Look) void {
+    // Runs after the values were handed out, so it sees and can override them.
+    base.ghostty.?.window_padding_x = .all(look.values.padding.? * 2);
+}
+
+test "the look's tweak runs after the fonts and values are handed out" {
+    const look: Look = comptime blk: {
+        var look = test_look;
+        look.values.padding = 10;
+        look.tweak = testTweak;
+        break :blk look;
+    };
+    const base = from(look, .{ .only = &.{.ghostty} });
+    try testing.expectEqual(kosm_ghostty.values.Padding.all(20), base.ghostty.?.window_padding_x.?);
+    try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_y.?);
+}
+
+/// An app of a user's own, outside the official base.
+const TestApp = struct {
+    accent: kosm.Color,
+    fn from(theme: kosm.Theme) TestApp {
+        return .{ .accent = theme.roles.accent };
+    }
+};
+
+test "a user base holds the official one beside its own apps, which take the look's accent" {
+    const accented: Look = comptime blk: {
+        var look = test_look;
+        look.theme = .from(.{ .palette = test_palette, .mode = .dark, .roles = .{ .accent = kosm.hex("ff8000") } });
+        break :blk look;
+    };
+    const UserBase = struct { base: Base, mine: TestApp };
+    const user: UserBase = .{ .base = from(accented, .{ .only = &.{.gtk} }), .mine = .from(accented.theme) };
+    try testing.expectEqual(kosm.hex("ff8000"), user.mine.accent);
+    try testing.expectEqual(user.mine.accent, user.base.gtk.?.colors.accent_bg.?);
+}
+
+test "the default look is literal: pure hues and square corners" {
+    const base = from(Look.default, .{ .only = &.{.hyprland} });
+    try testing.expectEqual(kosm.hex("00ffff"), Look.default.theme.roles.accent);
+    try testing.expectEqual(kosm.hex("000000"), Look.default.theme.roles.background);
+    try testing.expectEqual(0, base.hyprland.?.decoration.rounding.?);
 }
