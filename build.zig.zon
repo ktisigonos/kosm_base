@@ -117,8 +117,8 @@
             .hash = "kosm_darkreader-0.0.0-mJl86fUxAACv3OpQWlpN8D-LVoaWpZgov1obG7TiWVKv",
         },
         .kosm_blender = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#65bd02be67d2734572d4da174473b9d2b5ec14a2",
-            .hash = "kosm_blender-0.0.0-_ubM3JFjAAB4XqhztuD_-9O3RI-Fy62w7n1pAE2g4iIk",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#64fcc17e907f2f76edfa923505f9755407c4e64f",
+            .hash = "kosm_blender-0.0.0-_ubM3M19AADRhGSs8HcwyIEw7r4dQFDh19gQnXvsi9xP",
         },
         .kosm_adwsteamgtk = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_adwsteamgtk?ref=master#bbfe40fcd5b869fcf40de59826e8ff857692b396",
