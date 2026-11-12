@@ -12,6 +12,7 @@ const kosm_counter_strike_2 = @import("kosm_counter_strike_2");
 const kosm_darkreader = @import("kosm_darkreader");
 const kosm_dunst = @import("kosm_dunst");
 const kosm_equibop = @import("kosm_equibop");
+const kosm_fastfetch = @import("kosm_fastfetch");
 const kosm_fontconfig = @import("kosm_fontconfig");
 const kosm_foot = @import("kosm_foot");
 const kosm_ghostty = @import("kosm_ghostty");
@@ -46,6 +47,8 @@ darkreader: ?kosm_darkreader.App,
 dunst: ?kosm_dunst.App,
 /// Equibop's QuickCSS colors and font. null: not riced.
 equibop: ?kosm_equibop.App,
+/// fastfetch's whole config: its layout and colors. null: not riced.
+fastfetch: ?kosm_fastfetch.App,
 /// fontconfig's default families. null: not riced.
 fontconfig: ?kosm_fontconfig.App,
 /// foot's colors and fonts. null: not riced.
@@ -86,6 +89,7 @@ pub const App = enum {
     darkreader,
     dunst,
     equibop,
+    fastfetch,
     fontconfig,
     foot,
     ghostty,
@@ -152,6 +156,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .darkreader = if (apps.has(.darkreader)) kosm_darkreader.from(theme) else null,
         .dunst = if (apps.has(.dunst)) kosm_dunst.from(theme) else null,
         .equibop = if (apps.has(.equibop)) kosm_equibop.from(theme) else null,
+        .fastfetch = if (apps.has(.fastfetch)) kosm_fastfetch.from(theme) else null,
         .fontconfig = if (apps.has(.fontconfig)) kosm_fontconfig.from(theme) else null,
         .foot = if (apps.has(.foot)) kosm_foot.from(theme) else null,
         .ghostty = if (apps.has(.ghostty)) kosm_ghostty.from(theme) else null,
@@ -269,7 +274,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_darkreader, kosm_dunst, kosm_equibop, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_darkreader, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);

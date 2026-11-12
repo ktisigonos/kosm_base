@@ -128,6 +128,10 @@
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#7346ed5bfef5f16f8d3cd39d1d437e746746a2a8",
             .hash = "kosm-0.0.0-YCShsgmjCgDiHp77PKiytuVIJmGxJFJZwID74VSnDXpM",
         },
+        .kosm_fastfetch = .{
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fastfetch?ref=master#dfd631324e818c76f5ba1f8c10706ead76edcc83",
+            .hash = "kosm_fastfetch-0.0.0-8AG95RxaAABuxzMr49LB2ZSTzJCe7Cz_qjPLxAL9Maiu",
+        },
     },
     .paths = .{
         "build.zig",

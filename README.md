@@ -50,6 +50,8 @@ prompt config with a `palette`), `qtct` (qt5ct's and qt6ct's configs), `tuios`, 
 `zen` (a profile). Kosm names the app and file when one is missing; leave that app out.
 `counter_strike_2` and `blender` write into their programs' folders (the game's, Blender's
 version folder), which they create when missing, so leave them out on a machine without the program.
+`fastfetch` owns `~/.config/fastfetch/config.jsonc` whole and replaces one written by hand, so lay
+fastfetch out through the app's fields (`kosm_fastfetch`'s README) or leave it out.
 
 ## Fonts
 
