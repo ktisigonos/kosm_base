@@ -9,10 +9,10 @@ const kosm_adwsteamgtk = @import("kosm_adwsteamgtk");
 const kosm_blender = @import("kosm_blender");
 const kosm_counter_strike = @import("kosm_counter_strike");
 const kosm_counter_strike_2 = @import("kosm_counter_strike_2");
-const kosm_darkreader = @import("kosm_darkreader");
 const kosm_dunst = @import("kosm_dunst");
 const kosm_equibop = @import("kosm_equibop");
 const kosm_fastfetch = @import("kosm_fastfetch");
+const kosm_firefox = @import("kosm_firefox");
 const kosm_fontconfig = @import("kosm_fontconfig");
 const kosm_foot = @import("kosm_foot");
 const kosm_ghostty = @import("kosm_ghostty");
@@ -41,14 +41,15 @@ blender: ?kosm_blender.App,
 counter_strike: ?kosm_counter_strike.App,
 /// Counter-Strike 2's UI font. null: not riced.
 counter_strike_2: ?kosm_counter_strike_2.App,
-/// Dark Reader's colors; needs its exported settings file. null: not riced.
-darkreader: ?kosm_darkreader.App,
 /// dunst's notifications. null: not riced.
 dunst: ?kosm_dunst.App,
 /// Equibop's QuickCSS colors and font. null: not riced.
 equibop: ?kosm_equibop.App,
 /// fastfetch's whole config: its layout and colors. null: not riced.
 fastfetch: ?kosm_fastfetch.App,
+/// Pages in Firefox-based browsers, in the colors and font, through kosm's extension; Kosm Live
+/// in every Zen profile, which also makes `zen`'s prefs live. null: not riced.
+firefox: ?kosm_firefox.App,
 /// fontconfig's default families. null: not riced.
 fontconfig: ?kosm_fontconfig.App,
 /// foot's colors and fonts. null: not riced.
@@ -86,10 +87,10 @@ pub const App = enum {
     blender,
     counter_strike,
     counter_strike_2,
-    darkreader,
     dunst,
     equibop,
     fastfetch,
+    firefox,
     fontconfig,
     foot,
     ghostty,
@@ -153,10 +154,10 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .blender = if (apps.has(.blender)) kosm_blender.from(theme) else null,
         .counter_strike = if (apps.has(.counter_strike)) kosm_counter_strike.from(theme) else null,
         .counter_strike_2 = if (apps.has(.counter_strike_2)) kosm_counter_strike_2.from(theme) else null,
-        .darkreader = if (apps.has(.darkreader)) kosm_darkreader.from(theme) else null,
         .dunst = if (apps.has(.dunst)) kosm_dunst.from(theme) else null,
         .equibop = if (apps.has(.equibop)) kosm_equibop.from(theme) else null,
         .fastfetch = if (apps.has(.fastfetch)) kosm_fastfetch.from(theme) else null,
+        .firefox = if (apps.has(.firefox)) kosm_firefox.from(theme) else null,
         .fontconfig = if (apps.has(.fontconfig)) kosm_fontconfig.from(theme) else null,
         .foot = if (apps.has(.foot)) kosm_foot.from(theme) else null,
         .ghostty = if (apps.has(.ghostty)) kosm_ghostty.from(theme) else null,
@@ -177,6 +178,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     if (base.counter_strike_2) |*counter_strike_2| counter_strike_2.font = main;
     if (base.dunst) |*dunst| dunst.global.font = .{ .families = fonts.families, .size = fonts.size };
     if (base.equibop) |*equibop| equibop.font = main;
+    if (base.firefox) |*firefox| firefox.theme.font_family = fonts.families;
     if (base.fontconfig) |*fontconfig| {
         fontconfig.sans_serif = fonts.families;
         fontconfig.serif = fonts.families;
@@ -207,6 +209,10 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         vicinae.font_family = main;
         vicinae.font_size = fonts.size;
     }
+    // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
+    if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
+        profile.live = true;
+    };
     base.setValues(look.values);
     if (look.tweak) |tweak| tweak(&base, look);
     return base;
@@ -274,7 +280,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_darkreader, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -289,7 +295,6 @@ const adapters = blk: {
 /// The files apps edit in place, which a real setup has and a temp home must be given.
 const existing = [_]struct { []const u8, []const u8 }{
     .{ ".local/share/Steam/steamapps/common/Half-Life/valve/resource/TrackerScheme.res", "Scheme\n{\n\tColors\n\t{\n" ++ scheme_colors ++ "\t}\n\tFonts\n\t{\n\t\t\"Default\" { \"1\" { \"name\" \"Tahoma\" } }\n\t}\n}\n" },
-    .{ ".config/darkreader/Dark-Reader-Settings.json", "{\"theme\": {\"darkSchemeBackgroundColor\": \"#181a1b\", \"darkSchemeTextColor\": \"#e8e6e3\", \"lightSchemeBackgroundColor\": \"#dcdad7\", \"lightSchemeTextColor\": \"#181a1b\", \"selectionColor\": \"auto\", \"scrollbarColor\": \"auto\"}}\n" },
     .{ ".config/hypr/hyprmouse.conf", "font = Sans\nfont_size = 25\nbackground_color = #000000\ngrid_color = #000000\ndot_color = #000000\ntext_color = #000000\ntext_outline_color = #000000\nbackground_opacity = 1\n" },
     .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\n" },
     .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\n" },
@@ -429,6 +434,13 @@ test "fonts reach every app that has them" {
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
+}
+
+test "with firefox, pages get the look's fonts and Zen's prefs go live" {
+    const base = from(test_look, .all);
+    try testing.expectEqualStrings("Noto Sans", base.firefox.?.theme.font_family.?[1]);
+    try testing.expect(base.zen.?.profile.?.live);
+    try testing.expect(!from(test_look, .{ .except = &.{.firefox} }).zen.?.profile.?.live);
 }
 
 test "each shared value reaches every app having that setting" {
