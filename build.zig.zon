@@ -113,8 +113,8 @@
             .hash = "kosm_dunst-0.0.0-bFXk7dAyAABZr2IDv0q7rXGjWyOt3E8an0I30tc7tZ-Z",
         },
         .kosm_firefox = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#a2d748b3b74e9639f283ad1ebc767474adee29d8",
-            .hash = "kosm_firefox-0.0.0-UE8nmNokBgDNhMwOGhh09sO6pXWLulmiBmHRsdtddTZU",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#335c6c36257af353c9d9de38b3341d6cd949332a",
+            .hash = "kosm_firefox-0.0.0-UE8nmEUmBgCWjvalZk9wMIOZUXXQmXD7SOOwNlD1CFIy",
         },
         .kosm_blender = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#a8c376fcdc2e9ca48eef08b077c67349800062da",
