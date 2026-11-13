@@ -56,6 +56,8 @@ owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at i
 `icons` writes BeautyLine in the theme's colors to `~/.local/share/icons/kosm` (thousands of files,
 shown as one line in a diff), which GTK, KDE, hyprtoolkit and Vicinae then pick; `kosm_icons`' README has a
 system theme instead.
+`hyprpaper` owns `~/.config/hypr/hyprpaper.conf` whole once a kosmos sets a wallpaper
+(`apps.hyprpaper.?.wallpapers`); with none set it writes nothing (`kosm_hyprpaper`'s README).
 
 ## Fonts
 

@@ -19,6 +19,7 @@ const kosm_ghostty = @import("kosm_ghostty");
 const kosm_gtk = @import("kosm_gtk");
 const kosm_hyprland = @import("kosm_hyprland");
 const kosm_hyprmouse = @import("kosm_hyprmouse");
+const kosm_hyprpaper = @import("kosm_hyprpaper");
 const kosm_hyprtoolkit = @import("kosm_hyprtoolkit");
 const kosm_icons = @import("kosm_icons");
 const kosm_kde = @import("kosm_kde");
@@ -63,6 +64,8 @@ gtk: ?kosm_gtk.App,
 hyprland: ?kosm_hyprland.App,
 /// hyprmouse's overlay; needs its hyprmouse.conf. null: not riced.
 hyprmouse: ?kosm_hyprmouse.App,
+/// hyprpaper's wallpapers, which the kosmos sets; with none, nothing is written. null: not riced.
+hyprpaper: ?kosm_hyprpaper.App,
 /// hyprtoolkit apps' colors and fonts. null: not riced.
 hyprtoolkit: ?kosm_hyprtoolkit.App,
 /// An icon theme in the theme's colors (BeautyLine), which GTK, KDE and hyprtoolkit pick.
@@ -101,6 +104,7 @@ pub const App = enum {
     gtk,
     hyprland,
     hyprmouse,
+    hyprpaper,
     hyprtoolkit,
     icons,
     kde,
@@ -169,6 +173,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .gtk = if (apps.has(.gtk)) kosm_gtk.from(theme) else null,
         .hyprland = if (apps.has(.hyprland)) kosm_hyprland.from(theme) else null,
         .hyprmouse = if (apps.has(.hyprmouse)) kosm_hyprmouse.from(theme) else null,
+        .hyprpaper = if (apps.has(.hyprpaper)) kosm_hyprpaper.from(theme) else null,
         .hyprtoolkit = if (apps.has(.hyprtoolkit)) kosm_hyprtoolkit.from(theme) else null,
         .icons = if (apps.has(.icons)) kosm_icons.from(theme) else null,
         .kde = if (apps.has(.kde)) kosm_kde.from(theme) else null,
@@ -294,7 +299,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);

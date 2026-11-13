@@ -80,6 +80,10 @@
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_icons?ref=master#8a3547038a63ad922da4d3aefd7612669d5c3cec",
             .hash = "kosm_icons-0.0.0-55E6XM3ZAAAkLk7Iu7UHskFzpTjuIpkZ5YLOQv90snRG",
         },
+        .kosm_hyprpaper = .{
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprpaper?ref=master#35ea81cac0d41852c86dcaa831857e5e290b555c",
+            .hash = "kosm_hyprpaper-0.0.0-X_TVWzUrAACRH4kt5kpf-aarsczUcdaf3nC-3QE69EiD",
+        },
         .kosm_hyprtoolkit = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprtoolkit?ref=master#2e11f58de66b370c59f3e0b594f76bd22f9f1815",
             .hash = "kosm_hyprtoolkit-0.0.0-31tEkEIlAABbePJiMr2C5K6--gGo3X_V9InBCRZx_psf",
