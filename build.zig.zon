@@ -77,8 +77,8 @@
             .hash = "kosm_kde-0.0.0-EC3JDzlhAABaar8XQ2gj5AQ2WohJo5YhUXCEOAPY5y2h",
         },
         .kosm_icons = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_icons?ref=master#16df9acf08151cfdb9cebb1bbce139e6de23db2b",
-            .hash = "kosm_icons-0.0.0-55E6XO61AABS0h1aXA7jHcA3dSMed9q-jtFQfz9zl2yU",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_icons?ref=master#ae19795f988eac9f1f15639f4087ab2142024fa6",
+            .hash = "kosm_icons-0.0.0-55E6XOLZAADT0cB7AT1elQZ6ZxzyaDLRPXFjSqJIRlfv",
         },
         .kosm_hyprtoolkit = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprtoolkit?ref=master#2e11f58de66b370c59f3e0b594f76bd22f9f1815",
