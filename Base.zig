@@ -20,6 +20,7 @@ const kosm_gtk = @import("kosm_gtk");
 const kosm_hyprland = @import("kosm_hyprland");
 const kosm_hyprmouse = @import("kosm_hyprmouse");
 const kosm_hyprtoolkit = @import("kosm_hyprtoolkit");
+const kosm_icons = @import("kosm_icons");
 const kosm_kde = @import("kosm_kde");
 const kosm_kitty = @import("kosm_kitty");
 const kosm_nvim = @import("kosm_nvim");
@@ -64,6 +65,9 @@ hyprland: ?kosm_hyprland.App,
 hyprmouse: ?kosm_hyprmouse.App,
 /// hyprtoolkit apps' colors and fonts. null: not riced.
 hyprtoolkit: ?kosm_hyprtoolkit.App,
+/// An icon theme in the theme's colors (BeautyLine), which GTK, KDE and hyprtoolkit pick.
+/// null: not riced.
+icons: ?kosm_icons.App,
 /// KDE's color scheme and kdeglobals. null: not riced.
 kde: ?kosm_kde.App,
 /// kitty's colors and font. null: not riced.
@@ -98,6 +102,7 @@ pub const App = enum {
     hyprland,
     hyprmouse,
     hyprtoolkit,
+    icons,
     kde,
     kitty,
     nvim,
@@ -165,6 +170,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .hyprland = if (apps.has(.hyprland)) kosm_hyprland.from(theme) else null,
         .hyprmouse = if (apps.has(.hyprmouse)) kosm_hyprmouse.from(theme) else null,
         .hyprtoolkit = if (apps.has(.hyprtoolkit)) kosm_hyprtoolkit.from(theme) else null,
+        .icons = if (apps.has(.icons)) kosm_icons.from(theme) else null,
         .kde = if (apps.has(.kde)) kosm_kde.from(theme) else null,
         .kitty = if (apps.has(.kitty)) kosm_kitty.from(theme) else null,
         .nvim = if (apps.has(.nvim)) kosm_nvim.from(theme) else null,
@@ -218,8 +224,10 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     return base;
 }
 
-/// Sets each value that is not null in every app having that setting.
+/// Sets each value that is not null in every app having that setting. With no `icon_theme`,
+/// the icons app's theme is picked.
 fn setValues(base: *Base, values: Values) void {
+    const icon_theme = values.icon_theme orelse if (base.icons) |icons| icons.themeName() else null;
     if (base.ghostty) |*ghostty| if (values.padding) |padding| {
         ghostty.window_padding_x = .all(padding);
         ghostty.window_padding_y = .all(padding);
@@ -232,17 +240,20 @@ fn setValues(base: *Base, values: Values) void {
         if (values.editor) |editor| kitty.advanced.editor = editor;
     }
     if (base.gtk) |*gtk| {
-        if (values.icon_theme) |icon_theme| gtk.settings.gtk_icon_theme_name = icon_theme;
+        if (icon_theme) |name| gtk.settings.gtk_icon_theme_name = name;
         if (values.cursor.name) |name| gtk.settings.gtk_cursor_theme_name = name;
         if (values.cursor.size) |size| gtk.settings.gtk_cursor_theme_size = size;
     }
     if (base.hyprtoolkit) |*hyprtoolkit| {
-        if (values.icon_theme) |icon_theme| hyprtoolkit.icon_theme = icon_theme;
+        if (icon_theme) |name| hyprtoolkit.icon_theme = name;
         if (values.rounding) |rounding| {
             hyprtoolkit.rounding_large = rounding;
             hyprtoolkit.rounding_small = rounding / 2;
         }
     }
+    if (base.kde) |*kde| if (icon_theme) |name| {
+        kde.icon_theme = name;
+    };
     if (base.zen) |*zen| if (zen.profile) |*profile| if (values.rounding) |rounding| {
         profile.prefs.zen.theme.border_radius = @intCast(rounding);
     };
@@ -280,7 +291,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -482,6 +493,7 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(kosm_kitty.values.Edges.all(10), base.kitty.?.window.window_padding_width.?);
     try testing.expectEqualStrings("nvim", base.kitty.?.advanced.editor.?);
     try testing.expectEqualStrings("Papirus", base.gtk.?.settings.gtk_icon_theme_name.?);
+    try testing.expectEqualStrings("Papirus", base.kde.?.icon_theme.?);
     try testing.expectEqualStrings("Bibata", base.gtk.?.settings.gtk_cursor_theme_name.?);
     try testing.expectEqual(24, base.gtk.?.settings.gtk_cursor_theme_size.?);
 }
@@ -491,7 +503,17 @@ test "values left null leave every app's setting unwritten" {
     try testing.expectEqual(null, base.hyprland.?.general.border_size);
     try testing.expectEqual(null, base.hyprland.?.cursor_theme);
     try testing.expectEqual(null, base.kitty.?.window.window_padding_width);
-    try testing.expectEqual(null, base.gtk.?.settings.gtk_icon_theme_name);
+    try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
+    const without_icons = from(test_look, .{ .except = &.{.icons} });
+    try testing.expectEqual(null, without_icons.gtk.?.settings.gtk_icon_theme_name);
+    try testing.expectEqual(null, without_icons.kde.?.icon_theme);
+}
+
+test "with no icon_theme, GTK, KDE and hyprtoolkit pick the icons app's theme" {
+    const base = from(test_look, .all);
+    try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
+    try testing.expectEqualStrings("kosm", base.kde.?.icon_theme.?);
+    try testing.expectEqualStrings("kosm", base.hyprtoolkit.?.icon_theme.?);
 }
 
 fn testTweak(base: *Base, look: Look) void {

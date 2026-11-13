@@ -53,6 +53,9 @@ version folder), which they create when missing, so leave them out on a machine 
 fastfetch out through the app's fields (`kosm_fastfetch`'s README) or leave it out. `ohmyposh`
 owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at it, and run
 `oh-my-posh enable reload` once so open shells follow an apply (`kosm_ohmyposh`'s README).
+`icons` writes BeautyLine in the theme's colors to `~/.local/share/icons/kosm` (thousands of files,
+shown as one line in a diff), which GTK, KDE and hyprtoolkit then pick; `kosm_icons`' README has a
+system theme instead.
 
 ## Fonts
 
@@ -90,6 +93,6 @@ not written, so each program's own default applies.
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow` |
 | `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*` |
-| `icon_theme` | GTK's and hyprtoolkit's icon theme |
+| `icon_theme` | GTK's, KDE's and hyprtoolkit's icon theme; null picks the `icons` app's theme |
 | `keyboard` | Hyprland's `input.kb_*` (a `kosm.Keyboard`) |
 | `editor` | kitty's `editor` |
