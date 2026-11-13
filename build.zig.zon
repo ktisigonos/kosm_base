@@ -45,8 +45,8 @@
             .hash = "kosm_css-0.0.0-oGvx3AUZAAB3d6Mm_oSrGXFiOXPc8oJ9YcDPW3lFIwvF",
         },
         .kosm_zen = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#540bee206bb904910a75081cad3c3d2923f7f5a7",
-            .hash = "kosm_zen-0.0.0-PJSR5IxbAQBlpffWV3rIyLhHjqzwd5bPLJ84xezfqjjd",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#7dbeae6cb5cdc934b90018c74d6c8115fce5ceca",
+            .hash = "kosm_zen-0.0.0-PJSR5EBdAQC7njHRFMr3b-2D5Kt4ca_U7SZ0aG2AFtHs",
         },
         .kosm_vicinae = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#7f68ced7a0bcd5b3ffd1d6559edd9c462f2a165e",
