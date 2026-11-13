@@ -20,7 +20,7 @@ padding: ?u32 = null,
 shadow: Shadow = .{},
 /// The pointer.
 cursor: Cursor = .{},
-/// The icon theme's name: GTK, KDE and hyprtoolkit. null: the icons app's theme (`kosm`), or
+/// The icon theme's name: GTK, KDE, hyprtoolkit and Vicinae. null: the icons app's theme (`kosm`), or
 /// not written without that app.
 icon_theme: ?[]const u8 = null,
 /// Keyboard layouts, variants and options: Hyprland's `input.kb_*`. null: not written.

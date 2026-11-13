@@ -254,6 +254,9 @@ fn setValues(base: *Base, values: Values) void {
     if (base.kde) |*kde| if (icon_theme) |name| {
         kde.icon_theme = name;
     };
+    if (base.vicinae) |*vicinae| if (icon_theme) |name| {
+        vicinae.icon_theme = name;
+    };
     if (base.zen) |*zen| if (zen.profile) |*profile| if (values.rounding) |rounding| {
         profile.prefs.zen.theme.border_radius = @intCast(rounding);
     };
@@ -494,6 +497,7 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqualStrings("nvim", base.kitty.?.advanced.editor.?);
     try testing.expectEqualStrings("Papirus", base.gtk.?.settings.gtk_icon_theme_name.?);
     try testing.expectEqualStrings("Papirus", base.kde.?.icon_theme.?);
+    try testing.expectEqualStrings("Papirus", base.vicinae.?.icon_theme.?);
     try testing.expectEqualStrings("Bibata", base.gtk.?.settings.gtk_cursor_theme_name.?);
     try testing.expectEqual(24, base.gtk.?.settings.gtk_cursor_theme_size.?);
 }
@@ -509,11 +513,12 @@ test "values left null leave every app's setting unwritten" {
     try testing.expectEqual(null, without_icons.kde.?.icon_theme);
 }
 
-test "with no icon_theme, GTK, KDE and hyprtoolkit pick the icons app's theme" {
+test "with no icon_theme, GTK, KDE, hyprtoolkit and Vicinae pick the icons app's theme" {
     const base = from(test_look, .all);
     try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
     try testing.expectEqualStrings("kosm", base.kde.?.icon_theme.?);
     try testing.expectEqualStrings("kosm", base.hyprtoolkit.?.icon_theme.?);
+    try testing.expectEqualStrings("kosm", base.vicinae.?.icon_theme.?);
 }
 
 fn testTweak(base: *Base, look: Look) void {
