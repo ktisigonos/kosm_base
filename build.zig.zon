@@ -33,8 +33,8 @@
             .hash = "kosm_keyvalues-0.0.0-owZcISc8AACxuCMZGPI2rqcYdPSWJ-3HxlPcqimFlsL1",
         },
         .kosm_json = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_json?ref=master#125138c7ee3c5d75c2dc102fada2d6f63e6a2c7f",
-            .hash = "kosm_json-0.0.0-F6-IdUN_AACuHqsF6DZs7qidRylJvAMBBu2eZ-6b-f6m",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_json?ref=master#9bdef5a5a41e4c5951269e70268acfeba1a16b45",
+            .hash = "kosm_json-0.0.0-F6-Idb2qAADSKPg6lCwaWLWNCwevefNEBVEPBTxbuGWg",
         },
         .kosm_ini = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ini?ref=master#ccbfe4016b297cecde3bf73c99d96d54810fae91",
@@ -49,8 +49,8 @@
             .hash = "kosm_zen-0.0.0-PJSR5EBdAQC7njHRFMr3b-2D5Kt4ca_U7SZ0aG2AFtHs",
         },
         .kosm_vicinae = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#7f68ced7a0bcd5b3ffd1d6559edd9c462f2a165e",
-            .hash = "kosm_vicinae-0.0.0-xyIR2KFiAACjEvf3U_1EC3mByVKNW322nj24up_YzM7u",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#a0e1126ffc97977945c51a909cdf4c4721fc1d1c",
+            .hash = "kosm_vicinae-0.0.0-xyIR2MF6AAC6RO-zuLFxPr5DyTaeyteVCudPsGiYDRL4",
         },
         .kosm_tuios = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_tuios?ref=master#862021209b22723fdfaf1c2137935b91d324d6df",
@@ -133,8 +133,8 @@
             .hash = "kosm_adwsteamgtk-0.0.0-_esE6oI7AADntDmQj_U9AZlSCJL6Pr9QmVVolPfiCpfy",
         },
         .kosm = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#1d013bcad0ac1dcd95392460bd9c5eb959070cf7",
-            .hash = "kosm-0.0.0-YCShsmwODAA6WccSCLzyNcIhcLr4DZDmo_MvUNx8kfO9",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#2c9cd325d6caa18a2eeebffdced5c3f309bad4da",
+            .hash = "kosm-0.0.0-YCShslEpDACCVyYhyc1qrMEGijrZelH5XPFEj20z_fAb",
         },
         .kosm_fastfetch = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fastfetch?ref=master#dfd631324e818c76f5ba1f8c10706ead76edcc83",
