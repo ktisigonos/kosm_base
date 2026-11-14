@@ -57,7 +57,8 @@ owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at i
 shown as one line in a diff), which GTK, KDE, hyprtoolkit and Vicinae then pick; `kosm_icons`' README has a
 system theme instead.
 `hyprpaper` owns `~/.config/hypr/hyprpaper.conf` whole once a kosmos sets a wallpaper
-(`apps.hyprpaper.?.wallpapers`); with none set it writes nothing (`kosm_hyprpaper`'s README).
+(`apps.hyprpaper.?.wallpapers`), or with `owned = false` only sets the wallpapers in the user's
+own file; with none set it writes nothing (`kosm_hyprpaper`'s README).
 
 ## Fonts
 
