@@ -133,8 +133,8 @@
             .hash = "kosm_blender-0.0.0-_ubM3KGPAAChT8LvNO7ru08xomfrviijkntFl_GMfkYp",
         },
         .kosm_commet = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_commet?ref=master#8930098a7c95725da1dded3ab21f2b41ec2e22a1",
-            .hash = "kosm_commet-0.0.0-lsxpUzZrAACa48ojC9YUcctzg5-C3V5xQj6WFc8vtVVR",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_commet?ref=master#4d7574d0cc446b45a00ced7e65a67f9d4d4944f7",
+            .hash = "kosm_commet-0.0.0-lsxpU4xrAACEWrS8UISWCBzqmjAS01K8cHhTATANtsp-",
         },
         .kosm_adwsteamgtk = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_adwsteamgtk?ref=master#465a2ff6b6cedde315b0bba62ec78a75846742f0",
