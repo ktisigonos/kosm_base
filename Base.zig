@@ -7,6 +7,7 @@ const std = @import("std");
 const kosm = @import("kosm");
 const kosm_adwsteamgtk = @import("kosm_adwsteamgtk");
 const kosm_blender = @import("kosm_blender");
+const kosm_commet = @import("kosm_commet");
 const kosm_counter_strike = @import("kosm_counter_strike");
 const kosm_counter_strike_2 = @import("kosm_counter_strike_2");
 const kosm_dunst = @import("kosm_dunst");
@@ -39,6 +40,9 @@ const Values = @import("Values.zig");
 adwsteamgtk: ?kosm_adwsteamgtk.App,
 /// Blender's interface theme preset. null: not riced.
 blender: ?kosm_blender.App,
+/// Commet's custom theme, selected in its preferences; needs its shared_preferences.json.
+/// null: not riced.
+commet: ?kosm_commet.App,
 /// Counter-Strike 1.6's menu colors and font; needs the game's TrackerScheme.res. null: not riced.
 counter_strike: ?kosm_counter_strike.App,
 /// Counter-Strike 2's UI font. null: not riced.
@@ -92,6 +96,7 @@ zen: ?kosm_zen.App,
 pub const App = enum {
     adwsteamgtk,
     blender,
+    commet,
     counter_strike,
     counter_strike_2,
     dunst,
@@ -161,6 +166,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     var base: Base = .{
         .adwsteamgtk = if (apps.has(.adwsteamgtk)) kosm_adwsteamgtk.from(theme) else null,
         .blender = if (apps.has(.blender)) kosm_blender.from(theme) else null,
+        .commet = if (apps.has(.commet)) kosm_commet.from(theme) else null,
         .counter_strike = if (apps.has(.counter_strike)) kosm_counter_strike.from(theme) else null,
         .counter_strike_2 = if (apps.has(.counter_strike_2)) kosm_counter_strike_2.from(theme) else null,
         .dunst = if (apps.has(.dunst)) kosm_dunst.from(theme) else null,
@@ -299,7 +305,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_commet, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -322,6 +328,7 @@ const existing = [_]struct { []const u8, []const u8 }{
     .{ ".zen/test.Default/zen-themes.json", "{\"kosm\": {\"id\": \"kosm\", \"preferences\": \"preferences.json\", \"enabled\": true}}\n" },
     // Blender writes its theme into every version it has run, found by its config files.
     .{ ".config/blender/5.2/config/bookmarks.txt", "" },
+    .{ ".var/app/chat.commet.commetapp/data/commet/shared_preferences.json", "{\"flutter.app_theme\":\"dark\"}" },
     .{ ".config/vicinae/settings.json", "{\"font\": {\"normal\": {\"family\": \"auto\", \"size\": 10.5}}, \"theme\": {\"dark\": {\"name\": \"vicinae-dark\"}}}\n" },
 };
 
