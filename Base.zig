@@ -10,6 +10,7 @@ const kosm_blender = @import("kosm_blender");
 const kosm_commet = @import("kosm_commet");
 const kosm_counter_strike = @import("kosm_counter_strike");
 const kosm_counter_strike_2 = @import("kosm_counter_strike_2");
+const kosm_cursor = @import("kosm_cursor");
 const kosm_dunst = @import("kosm_dunst");
 const kosm_equibop = @import("kosm_equibop");
 const kosm_fastfetch = @import("kosm_fastfetch");
@@ -48,6 +49,8 @@ commet: ?kosm_commet.App,
 counter_strike: ?kosm_counter_strike.App,
 /// Counter-Strike 2's UI font. null: not riced.
 counter_strike_2: ?kosm_counter_strike_2.App,
+/// A cursor theme in the theme's colors (Bibata), which GTK and Hyprland pick. null: not riced.
+cursor: ?kosm_cursor.App,
 /// dunst's notifications. null: not riced.
 dunst: ?kosm_dunst.App,
 /// Equibop's QuickCSS colors and font. null: not riced.
@@ -102,6 +105,7 @@ pub const App = enum {
     commet,
     counter_strike,
     counter_strike_2,
+    cursor,
     dunst,
     equibop,
     fastfetch,
@@ -174,6 +178,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .commet = if (apps.has(.commet)) kosm_commet.from(theme) else null,
         .counter_strike = if (apps.has(.counter_strike)) kosm_counter_strike.from(theme) else null,
         .counter_strike_2 = if (apps.has(.counter_strike_2)) kosm_counter_strike_2.from(theme) else null,
+        .cursor = if (apps.has(.cursor)) kosm_cursor.from(theme) else null,
         .dunst = if (apps.has(.dunst)) kosm_dunst.from(theme) else null,
         .equibop = if (apps.has(.equibop)) kosm_equibop.from(theme) else null,
         .fastfetch = if (apps.has(.fastfetch)) kosm_fastfetch.from(theme) else null,
@@ -253,10 +258,15 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     return base;
 }
 
-/// Sets each value that is not null in every app having that setting. With no `icon_theme`,
-/// the icons app's theme is picked; an inactive border left null follows the active one.
+/// Sets each value that is not null in every app having that setting. With no `icon_theme`
+/// or cursor name, the icons and cursor apps' themes are picked; an inactive border left null
+/// follows the active one.
 fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     const icon_theme = values.icon_theme orelse if (base.icons) |icons| icons.themeName() else null;
+    const cursor_theme = values.cursor.name orelse if (base.cursor) |cursor| cursor.themeName() else null;
+    if (base.cursor) |*cursor| if (values.cursor.size) |size| {
+        cursor.size = size;
+    };
     const active_border = values.borders.active;
     const inactive_border = values.borders.inactive orelse
         if (active_border) |active| theme.variations.state.inactive.apply(active) else null;
@@ -286,7 +296,7 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     }
     if (base.gtk) |*gtk| {
         if (icon_theme) |name| gtk.settings.gtk_icon_theme_name = name;
-        if (values.cursor.name) |name| gtk.settings.gtk_cursor_theme_name = name;
+        if (cursor_theme) |name| gtk.settings.gtk_cursor_theme_name = name;
         if (values.cursor.size) |size| gtk.settings.gtk_cursor_theme_size = size;
     }
     if (base.hyprtoolkit) |*hyprtoolkit| {
@@ -318,10 +328,10 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             profile.prefs.zen.theme.border_radius = @intCast(rounding);
         };
     }
-    if (base.hyprland) |*hyprland| setHyprland(hyprland, values);
+    if (base.hyprland) |*hyprland| setHyprland(hyprland, values, cursor_theme);
 }
 
-fn setHyprland(hyprland: *kosm_hyprland.App, values: Values) void {
+fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, cursor_theme: ?[]const u8) void {
     if (values.border_size) |size| hyprland.general.border_size = size;
     if (values.borders.active) |color| hyprland.general.col.active_border = .solid(color);
     if (values.borders.inactive) |color| hyprland.general.col.inactive_border = .solid(color);
@@ -332,7 +342,7 @@ fn setHyprland(hyprland: *kosm_hyprland.App, values: Values) void {
     if (values.rounding_power) |power| hyprland.decoration.rounding_power = power;
     if (values.shadow.range) |range| hyprland.decoration.shadow.range = range;
     if (values.shadow.render_power) |power| hyprland.decoration.shadow.render_power = power;
-    if (values.cursor.name) |name| hyprland.cursor_theme = name;
+    if (cursor_theme) |name| hyprland.cursor_theme = name;
     if (values.cursor.size) |size| hyprland.cursor_size = size;
     if (values.keyboard) |keyboard| hyprland.keyboard = keyboard;
 }
@@ -355,7 +365,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_commet, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_wlr_which_key, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_commet, kosm_counter_strike, kosm_counter_strike_2, kosm_cursor, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_wlr_which_key, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -623,7 +633,8 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
 test "values left null leave every app's setting unwritten" {
     const base = from(test_look, .all);
     try testing.expectEqual(null, base.hyprland.?.general.border_size);
-    try testing.expectEqual(null, base.hyprland.?.cursor_theme);
+    try testing.expectEqual(null, base.hyprland.?.cursor_size);
+    try testing.expectEqual(null, base.cursor.?.size);
     try testing.expectEqual(null, base.kitty.?.window.window_padding_width);
     try testing.expectEqual(null, base.hyprland.?.general.col.inactive_border);
     try testing.expectEqual(null, base.hyprland.?.decoration.blur.enabled);
@@ -634,6 +645,20 @@ test "values left null leave every app's setting unwritten" {
     const without_icons = from(test_look, .{ .except = &.{.icons} });
     try testing.expectEqual(null, without_icons.gtk.?.settings.gtk_icon_theme_name);
     try testing.expectEqual(null, without_icons.kde.?.icon_theme);
+}
+
+test "with no cursor name, GTK and Hyprland pick the cursor app's theme, and the size reaches it" {
+    const base = from(test_look, .all);
+    try testing.expectEqualStrings("kosm_cursor", base.gtk.?.settings.gtk_cursor_theme_name.?);
+    try testing.expectEqualStrings("kosm_cursor", base.hyprland.?.cursor_theme.?);
+    const sized: Look = comptime blk: {
+        var look = test_look;
+        look.values.cursor.size = 32;
+        break :blk look;
+    };
+    try testing.expectEqual(32, from(sized, .all).cursor.?.size.?);
+    const without_cursor = from(test_look, .{ .except = &.{.cursor} });
+    try testing.expectEqual(null, without_cursor.hyprland.?.cursor_theme);
 }
 
 test "with no icon_theme, GTK, KDE, hyprtoolkit and Vicinae pick the icons app's theme" {

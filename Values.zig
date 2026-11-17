@@ -71,7 +71,7 @@ pub const Shadow = struct {
 /// The pointer.
 pub const Cursor = struct {
     /// The cursor theme's name: GTK's, and Hyprland's `XCURSOR_THEME` and `HYPRCURSOR_THEME`.
-    /// null: not written.
+    /// null: the cursor app's theme (`kosm_cursor`), or not written without that app.
     name: ?[]const u8 = null,
     /// The cursor's size in pixels: GTK's, and Hyprland's `XCURSOR_SIZE` and
     /// `HYPRCURSOR_SIZE`. null: not written.

@@ -81,8 +81,12 @@
             .hash = "kosm_kde-0.0.0-EC3JDzlhAABaar8XQ2gj5AQ2WohJo5YhUXCEOAPY5y2h",
         },
         .kosm_icons = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_icons?ref=master#8a3547038a63ad922da4d3aefd7612669d5c3cec",
-            .hash = "kosm_icons-0.0.0-55E6XM3ZAAAkLk7Iu7UHskFzpTjuIpkZ5YLOQv90snRG",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_icons?ref=master#c7efd52d73e37c705112fcebc609459b19863fba",
+            .hash = "kosm_icons-0.0.0-55E6XJrlAAD870CRb29ThBObKH881s9iJ940M3KFPvxX",
+        },
+        .kosm_cursor = .{
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_cursor?ref=master#d45865a0c7a8a144e813d69b563ef119cfa697d4",
+            .hash = "kosm_cursor-0.0.0-0YTWcWD3AADQnkN4RuvQ_i74fntVD-PpCebByazwXDfX",
         },
         .kosm_hyprpaper = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprpaper?ref=master#127ef1055656eab48df8fada500d256088d381d3",

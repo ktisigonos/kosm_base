@@ -59,6 +59,9 @@ owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at i
 `icons` writes BeautyLine in the theme's colors to `~/.local/share/icons/kosm` (thousands of files,
 shown as one line in a diff), which GTK, KDE, hyprtoolkit and Vicinae then pick; `kosm_icons`' README has a
 system theme instead.
+`cursor` writes Bibata in the theme's colors to `~/.local/share/icons/kosm_cursor`, for XCursor
+and hyprcursor, which GTK and Hyprland then pick; it needs the `resvg` library to build
+(`kosm_cursor`'s README).
 `hyprpaper` owns `~/.config/hypr/hyprpaper.conf` whole once a kosmos sets a wallpaper
 (`apps.hyprpaper.?.wallpapers`), or with `owned = false` only sets the wallpapers in the user's
 own file; with none set it writes nothing (`kosm_hyprpaper`'s README).
@@ -110,7 +113,7 @@ not written, so each program's own default applies.
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` |
 | `blur` | Hyprland's `decoration.blur.enabled`, Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur` (KDE and macOS only); how translucent windows are is the theme's `background_alpha` |
-| `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*` |
+| `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*`; null name picks the `cursor` app's theme, and the size is also the one `cursor` tells Hyprland to reload at |
 | `icon_theme` | GTK's, KDE's, hyprtoolkit's and Vicinae's icon theme; null picks the `icons` app's theme |
 | `keyboard` | Hyprland's `input.kb_*` (a `kosm.Keyboard`) |
 | `editor` | kitty's `editor` |
