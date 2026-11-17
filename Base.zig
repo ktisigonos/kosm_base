@@ -338,6 +338,9 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
         if (values.rounding) |rounding| wlr_which_key.corner_r = rounding;
         if (active_border) |color| wlr_which_key.border = color;
     }
+    if (base.firefox) |*firefox| if (values.rounding) |rounding| {
+        firefox.border_radius = .{ .pixels = rounding };
+    };
     if (base.zen) |*zen| {
         if (active_border) |color| zen.border = color;
         if (zen.profile) |*profile| if (values.rounding) |rounding| {
@@ -621,6 +624,8 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(6, base.hyprtoolkit.?.rounding_small.?);
     try testing.expectEqualStrings("Papirus", base.hyprtoolkit.?.icon_theme.?);
     try testing.expectEqual(12, base.zen.?.profile.?.prefs.zen.theme.border_radius.?);
+    try testing.expectEqual(12, base.firefox.?.border_radius.?.pixels);
+    try testing.expect(!base.firefox.?.enabled.corners);
     try testing.expectEqual(2, base.wlr_which_key.?.border_width.?);
     try testing.expectEqual(12, base.wlr_which_key.?.corner_r.?);
     try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_x.?);
