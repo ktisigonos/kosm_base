@@ -69,8 +69,8 @@
             .hash = "kosm_ohmyposh-0.0.0-asUeMzBpAAA-Ifv_cFCshcje67Jlu2XkBoufsFRKYrL3",
         },
         .kosm_nvim = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_nvim?ref=master#b7fd761592249576d3ad13e98abc63c10933b0a7",
-            .hash = "kosm_nvim-0.0.0-ULPOKBXuAAAoP5dtOL_sE-sbMpWN-fsOskM3IH8o1dXu",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_nvim?ref=master#c53e902ecaae0e679ec93c9de51d0b77b82f9e4e",
+            .hash = "kosm_nvim-0.0.0-ULPOKKDvAAAJuE8AJvRlNyDxOKizNY_p_FjJ73hnu9bZ",
         },
         .kosm_kitty = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kitty?ref=master#bdc114a44f5e3aa1784765db4c7fbc55b10e5a99",
