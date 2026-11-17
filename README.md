@@ -66,13 +66,21 @@ own file; with none set it writes nothing (`kosm_hyprpaper`'s README).
 fallbacks (fontconfig, ghostty, foot, dunst, Hyprland), the first to the rest (kitty, Vicinae,
 hyprtoolkit, hyprmouse, Equibop, Counter-Strike 1.6 and 2), and the size to terminals,
 notifications and the launcher. GTK gets the first family at the size as its interface,
-monospace and document font (`Maple Mono 13`). wlr-which-key gets every family at the size as one Pango font
-(`Maple Mono, Noto Sans 13`).
+monospace and document font (`Maple Mono 13`).
+
+Text with a role of its own gets the size plus that role's delta, so every size follows `size`:
+wlr-which-key gets every family at the `large` size as one Pango font (`Maple Mono, Noto Sans 16`),
+and hyprtoolkit its headings, body and small text (h1 `heading`, h2 `subheading`, h3 and body
+the size, small text `small`, rounded to whole points).
 
 | Field | Meaning |
 |---|---|
 | `families` | family names in fallback order, at least one; the first is the main font |
 | `size` | the size in points |
+| `deltas.large` | points added for short text read at a glance (wlr-which-key); default +3 |
+| `deltas.small` | points added for secondary text (hyprtoolkit's small text); default -4 |
+| `deltas.heading` | points added for the largest headings (hyprtoolkit's h1); default +12 |
+| `deltas.subheading` | points added for second-level headings (hyprtoolkit's h2); default +3 |
 
 ## Look
 

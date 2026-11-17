@@ -160,7 +160,8 @@ comptime {
 
 /// The `apps` chosen, each from its `from(look.theme)`, with the look's fonts wherever an app
 /// has fonts (every family for apps taking fallbacks, the first for apps taking one, and the
-/// size for terminals, notifications, the launcher and GTK) and each of its values set in
+/// size for terminals, notifications, the launcher and GTK, moved by its deltas for menus,
+/// headings and small text) and each of its values set in
 /// every app having that setting; then the look's tweak.
 pub fn from(comptime look: Look, apps: Apps) Base {
     const theme = look.theme;
@@ -222,6 +223,11 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     if (base.hyprtoolkit) |*hyprtoolkit| {
         hyprtoolkit.font_family = main;
         hyprtoolkit.font_family_monospace = main;
+        hyprtoolkit.h1_size = fonts.wholePlus(fonts.deltas.heading);
+        hyprtoolkit.h2_size = fonts.wholePlus(fonts.deltas.subheading);
+        hyprtoolkit.h3_size = fonts.wholePlus(0);
+        hyprtoolkit.font_size = fonts.wholePlus(0);
+        hyprtoolkit.small_font_size = fonts.wholePlus(fonts.deltas.small);
     }
     if (base.kitty) |*kitty| {
         kitty.fonts.font_family = .{ .family = main };
@@ -231,7 +237,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         vicinae.font_family = main;
         vicinae.font_size = fonts.size;
     }
-    if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = comptime std.fmt.comptimePrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.size });
+    if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = comptime std.fmt.comptimePrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.plus(fonts.deltas.large) });
     // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
     if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
         profile.live = true;
@@ -470,8 +476,25 @@ test "fonts reach every app that has them" {
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);
-    try testing.expectEqualStrings("Maple Mono, Noto Sans 13", base.wlr_which_key.?.font.?);
+    try testing.expectEqualStrings("Maple Mono, Noto Sans 16", base.wlr_which_key.?.font.?);
+    try testing.expectEqual(25, base.hyprtoolkit.?.h1_size.?);
+    try testing.expectEqual(9, base.hyprtoolkit.?.small_font_size.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
+}
+
+test "role sizes follow the size and the look's deltas, rounded for apps taking whole points" {
+    const look: Look = comptime blk: {
+        var changed = test_look;
+        changed.fonts.size = 10.5;
+        changed.fonts.deltas.large = 4;
+        changed.fonts.deltas.subheading = 0;
+        break :blk changed;
+    };
+    const base = from(look, .{ .only = &.{ .wlr_which_key, .hyprtoolkit } });
+    try testing.expectEqualStrings("Maple Mono, Noto Sans 14.5", base.wlr_which_key.?.font.?);
+    try testing.expectEqual(23, base.hyprtoolkit.?.h1_size.?);
+    try testing.expectEqual(11, base.hyprtoolkit.?.h2_size.?);
+    try testing.expectEqual(7, base.hyprtoolkit.?.small_font_size.?);
 }
 
 test "with firefox, pages get the look's fonts and Zen's prefs go live" {
