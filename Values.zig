@@ -24,9 +24,9 @@ padding: ?u32 = null,
 shadow: Shadow = .{},
 /// Whether translucent windows blur what is behind them: Hyprland's `decoration.blur.enabled`,
 /// Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur`, kitty's
-/// `background_blur` and foot's `blur` in both
-/// color themes (the terminals' own blur is drawn only by
-/// compositors that offer it, such as KDE's; Hyprland blurs them by itself). Translucency itself is the theme's `background_alpha`. null: not written.
+/// `background_blur` and foot's `blur` in both color themes (the terminals' own blur is drawn
+/// only by compositors that offer it, such as KDE's; Hyprland blurs them by itself).
+/// Translucency itself is the theme's `background_alpha`. null: not written.
 blur: ?bool = null,
 /// The pointer.
 cursor: Cursor = .{},
