@@ -296,6 +296,7 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     if (base.blender) |*blender| {
         blender.rounding = values.rounding;
         blender.shadow_range = values.shadow.range;
+        blender.border_size = values.border_size;
     }
     if (base.commet) |*commet| if (values.rounding) |rounding| {
         commet.settings.caulk_border_radius = @floatFromInt(rounding);
@@ -628,6 +629,7 @@ test "each shared value reaches every app having that setting" {
     try testing.expect(!base.foot.?.colors_light.blur.?);
     try testing.expectEqual(12, base.blender.?.rounding.?);
     try testing.expectEqual(15, base.blender.?.shadow_range.?);
+    try testing.expectEqual(2, base.blender.?.border_size.?);
     try testing.expectEqual(12, base.commet.?.settings.caulk_border_radius.?);
     try testing.expectEqual(2, hyprland.general.border_size.?);
     try testing.expectEqual(kosm_hyprland.values.CssGap.all(4), hyprland.general.gaps_in.?);

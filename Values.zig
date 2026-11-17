@@ -4,7 +4,8 @@
 const kosm = @import("kosm");
 
 /// Width of window borders in pixels: Hyprland's `general.border_size`, wlr-which-key's
-/// `border_width`, Vicinae's `border_width`, dunst's `frame_width`. null: not written.
+/// `border_width`, Vicinae's `border_width`, dunst's `frame_width`, the outline around
+/// Blender's selected objects (1 to 5 pixels). null: not written.
 border_size: ?u32 = null,
 /// Colors of window borders.
 borders: Borders = .{},
