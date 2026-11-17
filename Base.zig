@@ -248,25 +248,41 @@ pub fn from(comptime look: Look, apps: Apps) Base {
     if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
         profile.live = true;
     };
-    base.setValues(look.values);
+    base.setValues(look.values, theme);
     if (look.tweak) |tweak| tweak(&base, look);
     return base;
 }
 
 /// Sets each value that is not null in every app having that setting. With no `icon_theme`,
-/// the icons app's theme is picked.
-fn setValues(base: *Base, values: Values) void {
+/// the icons app's theme is picked; an inactive border left null follows the active one.
+fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     const icon_theme = values.icon_theme orelse if (base.icons) |icons| icons.themeName() else null;
-    if (base.ghostty) |*ghostty| if (values.padding) |padding| {
-        ghostty.window_padding_x = .all(padding);
-        ghostty.window_padding_y = .all(padding);
-    };
+    const active_border = values.borders.active;
+    const inactive_border = values.borders.inactive orelse
+        if (active_border) |active| theme.variations.state.inactive.apply(active) else null;
+    if (base.dunst) |*dunst| {
+        if (values.border_size) |size| dunst.global.frame_width = size;
+        if (values.rounding) |rounding| dunst.global.corner_radius = rounding;
+        if (active_border) |color| {
+            dunst.urgency_low.frame_color = color;
+            dunst.urgency_normal.frame_color = color;
+        }
+    }
+    if (base.ghostty) |*ghostty| {
+        if (values.padding) |padding| {
+            ghostty.window_padding_x = .all(padding);
+            ghostty.window_padding_y = .all(padding);
+        }
+        if (values.blur) |blur| ghostty.background_blur = .{ .boolean = blur };
+    }
     if (base.foot) |*foot| if (values.padding) |padding| {
         foot.main.pad = .all(padding);
     };
     if (base.kitty) |*kitty| {
         if (values.padding) |padding| kitty.window.window_padding_width = .all(@floatFromInt(padding));
         if (values.editor) |editor| kitty.advanced.editor = editor;
+        if (active_border) |color| kitty.window.active_border_color = .{ .color = color };
+        if (inactive_border) |color| kitty.window.inactive_border_color = color;
     }
     if (base.gtk) |*gtk| {
         if (icon_theme) |name| gtk.settings.gtk_icon_theme_name = name;
@@ -283,21 +299,33 @@ fn setValues(base: *Base, values: Values) void {
     if (base.kde) |*kde| if (icon_theme) |name| {
         kde.icon_theme = name;
     };
-    if (base.vicinae) |*vicinae| if (icon_theme) |name| {
-        vicinae.icon_theme = name;
-    };
+    if (base.vicinae) |*vicinae| {
+        if (icon_theme) |name| vicinae.icon_theme = name;
+        if (values.rounding) |rounding| vicinae.rounding = rounding;
+        if (values.border_size) |size| vicinae.border_width = size;
+        if (values.shadow.range) |range| vicinae.shadow_size = range;
+        if (values.blur) |blur| vicinae.material = if (blur) .blur else .none;
+        if (active_border) |color| vicinae.colors.core.border = color;
+    }
     if (base.wlr_which_key) |*wlr_which_key| {
         if (values.border_size) |size| wlr_which_key.border_width = size;
         if (values.rounding) |rounding| wlr_which_key.corner_r = rounding;
+        if (active_border) |color| wlr_which_key.border = color;
     }
-    if (base.zen) |*zen| if (zen.profile) |*profile| if (values.rounding) |rounding| {
-        profile.prefs.zen.theme.border_radius = @intCast(rounding);
-    };
+    if (base.zen) |*zen| {
+        if (active_border) |color| zen.border = color;
+        if (zen.profile) |*profile| if (values.rounding) |rounding| {
+            profile.prefs.zen.theme.border_radius = @intCast(rounding);
+        };
+    }
     if (base.hyprland) |*hyprland| setHyprland(hyprland, values);
 }
 
 fn setHyprland(hyprland: *kosm_hyprland.App, values: Values) void {
     if (values.border_size) |size| hyprland.general.border_size = size;
+    if (values.borders.active) |color| hyprland.general.col.active_border = .solid(color);
+    if (values.borders.inactive) |color| hyprland.general.col.inactive_border = .solid(color);
+    if (values.blur) |blur| hyprland.decoration.blur.enabled = blur;
     if (values.gaps.inner) |inner| hyprland.general.gaps_in = .all(inner);
     if (values.gaps.outer) |outer| hyprland.general.gaps_out = .all(outer);
     if (values.rounding) |rounding| hyprland.decoration.rounding = rounding;
@@ -516,6 +544,7 @@ test "each shared value reaches every app having that setting" {
         var look = test_look;
         look.values = .{
             .border_size = 2,
+            .borders = .{ .active = kosm.hex("808080") },
             .rounding = 12,
             .rounding_power = 3,
             .gaps = .{ .inner = 4, .outer = 8 },
@@ -525,11 +554,30 @@ test "each shared value reaches every app having that setting" {
             .icon_theme = "Papirus",
             .keyboard = .{ .layouts = &.{.{ .layout = "us" }} },
             .editor = "nvim",
+            .blur = false,
         };
         break :blk look;
     };
     const base = from(look, .all);
     const hyprland = base.hyprland.?;
+    const gray = kosm.hex("808080");
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(gray), hyprland.general.col.active_border.?);
+    try testing.expect(!hyprland.decoration.blur.enabled.?);
+    try testing.expectEqual(gray, base.kitty.?.window.active_border_color.?.color);
+    try testing.expectEqual(look.theme.variations.state.inactive.apply(gray), base.kitty.?.window.inactive_border_color.?);
+    try testing.expectEqual(gray, base.wlr_which_key.?.border.?);
+    try testing.expectEqual(gray, base.zen.?.border.?);
+    try testing.expectEqual(gray, base.dunst.?.urgency_normal.frame_color.?);
+    try testing.expectEqual(look.theme.roles.@"error", base.dunst.?.urgency_critical.frame_color.?);
+    try testing.expectEqual(2, base.dunst.?.global.frame_width.?);
+    try testing.expectEqual(12, base.dunst.?.global.corner_radius.?);
+    const vicinae = base.vicinae.?;
+    try testing.expectEqual(gray, vicinae.colors.core.border.?);
+    try testing.expectEqual(12, vicinae.rounding.?);
+    try testing.expectEqual(2, vicinae.border_width.?);
+    try testing.expectEqual(15, vicinae.shadow_size.?);
+    try testing.expectEqual(.none, vicinae.material.?);
+    try testing.expect(!base.ghostty.?.background_blur.?.boolean);
     try testing.expectEqual(2, hyprland.general.border_size.?);
     try testing.expectEqual(kosm_hyprland.values.CssGap.all(4), hyprland.general.gaps_in.?);
     try testing.expectEqual(kosm_hyprland.values.CssGap.all(8), hyprland.general.gaps_out.?);
@@ -558,11 +606,30 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(24, base.gtk.?.settings.gtk_cursor_theme_size.?);
 }
 
+test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicinae's blur" {
+    const look: Look = comptime blk: {
+        var look = test_look;
+        look.values.borders.inactive = kosm.hex("282e22");
+        look.values.blur = true;
+        break :blk look;
+    };
+    const base = from(look, .all);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("282e22")), base.hyprland.?.general.col.inactive_border.?);
+    try testing.expectEqual(kosm.hex("282e22"), base.kitty.?.window.inactive_border_color.?);
+    try testing.expectEqual(look.theme.roles.accent, base.kitty.?.window.active_border_color.?.color);
+    try testing.expectEqual(.blur, base.vicinae.?.material.?);
+}
+
 test "values left null leave every app's setting unwritten" {
     const base = from(test_look, .all);
     try testing.expectEqual(null, base.hyprland.?.general.border_size);
     try testing.expectEqual(null, base.hyprland.?.cursor_theme);
     try testing.expectEqual(null, base.kitty.?.window.window_padding_width);
+    try testing.expectEqual(null, base.hyprland.?.general.col.inactive_border);
+    try testing.expectEqual(null, base.hyprland.?.decoration.blur.enabled);
+    try testing.expectEqual(null, base.vicinae.?.rounding);
+    try testing.expectEqual(null, base.vicinae.?.material);
+    try testing.expectEqual(null, base.dunst.?.global.corner_radius);
     try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
     const without_icons = from(test_look, .{ .except = &.{.icons} });
     try testing.expectEqual(null, without_icons.gtk.?.settings.gtk_icon_theme_name);

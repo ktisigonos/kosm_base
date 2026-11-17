@@ -53,8 +53,8 @@
             .hash = "kosm_wlr_which_key-0.0.0-x7N1FAUcAADzrJjIhtiehSdRtnsnwMLyBlojdV2M8ND9",
         },
         .kosm_vicinae = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#a0e1126ffc97977945c51a909cdf4c4721fc1d1c",
-            .hash = "kosm_vicinae-0.0.0-xyIR2MF6AAC6RO-zuLFxPr5DyTaeyteVCudPsGiYDRL4",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#6da9a64bae06fa819c94fe22b864db02ed93a373",
+            .hash = "kosm_vicinae-0.0.0-xyIR2O6LAAB0Ett5y-_fbMcRztbl4ZVGLiED679sjLZW",
         },
         .kosm_tuios = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_tuios?ref=master#862021209b22723fdfaf1c2137935b91d324d6df",
@@ -125,8 +125,8 @@
             .hash = "kosm_equibop-0.0.0-5EztXYgmAADQtuGHk-bnVb5M5YunkDtjy4Gvf1exkZtM",
         },
         .kosm_dunst = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#4799f65e52af558ada7bfb238f67b7213eb001a3",
-            .hash = "kosm_dunst-0.0.0-bFXk7dAyAABZr2IDv0q7rXGjWyOt3E8an0I30tc7tZ-Z",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#9628a6566425aba5aa629bda6b26b7ad220cd97f",
+            .hash = "kosm_dunst-0.0.0-bFXk7UY1AABTkH1ciK6UIC8bmzSjYfmLZpvLcCrY0ooc",
         },
         .kosm_firefox = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#335c6c36257af353c9d9de38b3341d6cd949332a",
