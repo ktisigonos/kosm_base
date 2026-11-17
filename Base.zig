@@ -231,6 +231,10 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         hyprland.misc.disable_splash_rendering = true;
     }
     if (base.hyprmouse) |*hyprmouse| hyprmouse.font = main;
+    if (base.qtct) |*qtct| {
+        qtct.fonts.general = .{ .family = main, .size = fonts.size };
+        qtct.fonts.fixed = .{ .family = main, .size = fonts.size };
+    }
     if (base.hyprtoolkit) |*hyprtoolkit| {
         hyprtoolkit.font_family = main;
         hyprtoolkit.font_family_monospace = main;
@@ -382,8 +386,8 @@ const adapters = blk: {
 const existing = [_]struct { []const u8, []const u8 }{
     .{ ".local/share/Steam/steamapps/common/Half-Life/valve/resource/TrackerScheme.res", "Scheme\n{\n\tColors\n\t{\n" ++ scheme_colors ++ "\t}\n\tFonts\n\t{\n\t\t\"Default\" { \"1\" { \"name\" \"Tahoma\" } }\n\t}\n}\n" },
     .{ ".config/hypr/hyprmouse.conf", "font = Sans\nfont_size = 25\nbackground_color = #000000\ngrid_color = #000000\ndot_color = #000000\ntext_color = #000000\ntext_outline_color = #000000\nbackground_opacity = 1\n" },
-    .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n" },
-    .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n" },
+    .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n\n[Fonts]\nfixed=\"Sans,10\"\ngeneral=\"Sans,10\"\n" },
+    .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n\n[Fonts]\nfixed=\"Sans,10\"\ngeneral=\"Sans,10\"\n" },
     .{ ".config/tuios/config.toml", "[appearance]\ntheme = \"default\"\n" },
     .{ ".zen/test.Default/prefs.js", "user_pref(\"browser.startup.page\", 3);\n" },
     .{ ".zen/test.Default/zen-themes.json", "{\"kosm\": {\"id\": \"kosm\", \"preferences\": \"preferences.json\", \"enabled\": true}}\n" },
@@ -526,6 +530,7 @@ test "fonts reach every app that has them" {
     try testing.expectEqual(25, base.hyprtoolkit.?.h1_size.?);
     try testing.expectEqual(9, base.hyprtoolkit.?.small_font_size.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
+    try testing.expectEqual(kosm_qtct.App.Font{ .family = "Maple Mono", .size = 13 }, base.qtct.?.fonts.fixed.?);
 }
 
 test "role sizes follow the size and the look's deltas, rounded for apps taking whole points" {

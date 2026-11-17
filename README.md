@@ -72,7 +72,8 @@ own file; with none set it writes nothing (`kosm_hyprpaper`'s README).
 fallbacks (fontconfig, ghostty, foot, dunst, Hyprland), the first to the rest (kitty, Vicinae,
 hyprtoolkit, hyprmouse, Equibop, Counter-Strike 1.6 and 2), and the size to terminals,
 notifications and the launcher. GTK gets the first family at the size as its interface,
-monospace and document font (`Maple Mono 13`).
+monospace and document font (`Maple Mono 13`), and qt5ct and qt6ct as their general and fixed
+font.
 
 Text with a role of its own gets the size plus that role's delta, so every size follows `size`:
 wlr-which-key gets every family at the `large` size as one Pango font (`Maple Mono, Noto Sans 16`),
