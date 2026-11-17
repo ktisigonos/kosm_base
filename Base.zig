@@ -218,7 +218,13 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         gtk.settings.monospace_font_name = font;
         gtk.settings.document_font_name = font;
     }
-    if (base.hyprland) |*hyprland| hyprland.misc.font_family = comptime pangoFamilies(fonts.families);
+    if (base.hyprland) |*hyprland| {
+        hyprland.misc.font_family = comptime pangoFamilies(fonts.families);
+        // Behind the wallpaper is the theme's background alone, so a wallpaper switch only
+        // flashes that color, not Hyprland's logo and default wallpaper.
+        hyprland.misc.disable_hyprland_logo = true;
+        hyprland.misc.disable_splash_rendering = true;
+    }
     if (base.hyprmouse) |*hyprmouse| hyprmouse.font = main;
     if (base.hyprtoolkit) |*hyprtoolkit| {
         hyprtoolkit.font_family = main;
@@ -473,6 +479,7 @@ test "apps left out are null" {
 test "fonts reach every app that has them" {
     const base = from(test_look, .all);
     try testing.expectEqualStrings("Maple Mono, Noto Sans", base.hyprland.?.misc.font_family.?);
+    try testing.expect(base.hyprland.?.misc.disable_hyprland_logo.?);
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);

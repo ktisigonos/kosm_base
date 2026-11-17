@@ -25,6 +25,9 @@ pub fn kosmos() base.Base {
 at 13, square corners, every other value the program's own. A look is known at compile time,
 written as a `const`.
 
+Hyprland's logo and splash text are off, so behind the wallpaper is the theme's background
+alone and switching wallpapers only flashes that color.
+
 A kosmos adding apps of its own returns a struct holding the base and them:
 `struct { base: base.Base, mine: my_app.App }`, building its own from `look.theme`, so they
 follow the look's roles like the official ones.
