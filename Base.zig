@@ -30,6 +30,7 @@ const kosm_ohmyposh = @import("kosm_ohmyposh");
 const kosm_qtct = @import("kosm_qtct");
 const kosm_tuios = @import("kosm_tuios");
 const kosm_vicinae = @import("kosm_vicinae");
+const kosm_wlr_which_key = @import("kosm_wlr_which_key");
 const kosm_zen = @import("kosm_zen");
 
 const Fonts = @import("Fonts.zig");
@@ -89,6 +90,8 @@ qtct: ?kosm_qtct.App,
 tuios: ?kosm_tuios.App,
 /// Vicinae's theme and font; needs its settings.json. null: not riced.
 vicinae: ?kosm_vicinae.App,
+/// wlr-which-key's colors, font and frame; needs its config.yaml. null: not riced.
+wlr_which_key: ?kosm_wlr_which_key.App,
 /// Zen Browser's colors, logo and prefs. null: not riced.
 zen: ?kosm_zen.App,
 
@@ -119,6 +122,7 @@ pub const App = enum {
     qtct,
     tuios,
     vicinae,
+    wlr_which_key,
     zen,
 };
 
@@ -189,6 +193,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         .qtct = if (apps.has(.qtct)) kosm_qtct.from(theme) else null,
         .tuios = if (apps.has(.tuios)) kosm_tuios.from(theme) else null,
         .vicinae = if (apps.has(.vicinae)) kosm_vicinae.from(theme) else null,
+        .wlr_which_key = if (apps.has(.wlr_which_key)) kosm_wlr_which_key.from(theme) else null,
         .zen = if (apps.has(.zen)) kosm_zen.from(theme) else null,
     };
     if (base.counter_strike) |*counter_strike| counter_strike.font = main;
@@ -226,6 +231,7 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         vicinae.font_family = main;
         vicinae.font_size = fonts.size;
     }
+    if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = comptime std.fmt.comptimePrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.size });
     // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
     if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
         profile.live = true;
@@ -268,6 +274,10 @@ fn setValues(base: *Base, values: Values) void {
     if (base.vicinae) |*vicinae| if (icon_theme) |name| {
         vicinae.icon_theme = name;
     };
+    if (base.wlr_which_key) |*wlr_which_key| {
+        if (values.border_size) |size| wlr_which_key.border_width = size;
+        if (values.rounding) |rounding| wlr_which_key.corner_r = rounding;
+    }
     if (base.zen) |*zen| if (zen.profile) |*profile| if (values.rounding) |rounding| {
         profile.prefs.zen.theme.border_radius = @intCast(rounding);
     };
@@ -305,7 +315,7 @@ fn pangoFamilies(comptime families: []const []const u8) []const u8 {
 const testing = std.testing;
 const adapters = blk: {
     var list: []const kosm.Adapter = &.{};
-    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_commet, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_zen }) |package| {
+    for (.{ kosm_adwsteamgtk, kosm_blender, kosm_commet, kosm_counter_strike, kosm_counter_strike_2, kosm_dunst, kosm_equibop, kosm_fastfetch, kosm_firefox, kosm_fontconfig, kosm_foot, kosm_ghostty, kosm_gtk, kosm_hyprland, kosm_hyprmouse, kosm_hyprpaper, kosm_hyprtoolkit, kosm_icons, kosm_kde, kosm_kitty, kosm_nvim, kosm_ohmyposh, kosm_qtct, kosm_tuios, kosm_vicinae, kosm_wlr_which_key, kosm_zen }) |package| {
         for (@typeInfo(package).@"struct".decl_names) |declaration| {
             if (@TypeOf(@field(package, declaration)) != kosm.Adapter) continue;
             const adapter = @field(package, declaration);
@@ -329,6 +339,7 @@ const existing = [_]struct { []const u8, []const u8 }{
     // Blender writes its theme into every version it has run, found by its config files.
     .{ ".config/blender/5.2/config/bookmarks.txt", "" },
     .{ ".var/app/chat.commet.commetapp/data/commet/shared_preferences.json", "{\"flutter.app_theme\":\"dark\"}" },
+    .{ ".config/wlr-which-key/config.yaml", "font: Sans 12\nbackground: \"#000000\"\ncolor: \"#000000\"\nborder: \"#000000\"\nborder_width: 1\ncorner_r: 0\nmenu:\n  - key: \"a\"\n    desc: A\n    cmd: a\n" },
     .{ ".config/vicinae/settings.json", "{\"font\": {\"normal\": {\"family\": \"auto\", \"size\": 10.5}}, \"theme\": {\"dark\": {\"name\": \"vicinae-dark\"}}}\n" },
 };
 
@@ -459,6 +470,7 @@ test "fonts reach every app that has them" {
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
     try testing.expectEqual(13, base.vicinae.?.font_size.?);
+    try testing.expectEqualStrings("Maple Mono, Noto Sans 13", base.wlr_which_key.?.font.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
 }
 
@@ -502,6 +514,8 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(6, base.hyprtoolkit.?.rounding_small.?);
     try testing.expectEqualStrings("Papirus", base.hyprtoolkit.?.icon_theme.?);
     try testing.expectEqual(12, base.zen.?.profile.?.prefs.zen.theme.border_radius.?);
+    try testing.expectEqual(2, base.wlr_which_key.?.border_width.?);
+    try testing.expectEqual(12, base.wlr_which_key.?.corner_r.?);
     try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_x.?);
     try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_y.?);
     try testing.expectEqual(kosm_foot.App.values.Pad.all(10), base.foot.?.main.pad.?);

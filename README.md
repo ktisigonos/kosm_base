@@ -45,7 +45,7 @@ The last argument of `from` says which apps are on; the others are null and neve
 The names are `Base`'s fields (the enum `base.Base.App`); naming one twice is fine.
 
 Apps that edit a program's own file need that file: `commet` (its Flatpak's
-`shared_preferences.json`), `counter_strike` (the game's TrackerScheme.res), `hyprmouse`, `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae` and
+`shared_preferences.json`), `counter_strike` (the game's TrackerScheme.res), `hyprmouse`, `qtct` (qt5ct's and qt6ct's configs), `tuios`, `vicinae`, `wlr_which_key` (its `config.yaml`) and
 `zen` (a profile, with the kosm mod's entry in its `zen-themes.json`). Kosm names the app and file when one is missing; leave that app out.
 `counter_strike_2` and `blender` write into their programs' folders (the game's, Blender's
 version folder), which they create when missing, so leave them out on a machine without the program.
@@ -66,7 +66,8 @@ own file; with none set it writes nothing (`kosm_hyprpaper`'s README).
 fallbacks (fontconfig, ghostty, foot, dunst, Hyprland), the first to the rest (kitty, Vicinae,
 hyprtoolkit, hyprmouse, Equibop, Counter-Strike 1.6 and 2), and the size to terminals,
 notifications and the launcher. GTK gets the first family at the size as its interface,
-monospace and document font (`Maple Mono 13`).
+monospace and document font (`Maple Mono 13`). wlr-which-key gets every family at the size as one Pango font
+(`Maple Mono, Noto Sans 13`).
 
 | Field | Meaning |
 |---|---|
@@ -89,8 +90,8 @@ not written, so each program's own default applies.
 
 | Field | Apps |
 |---|---|
-| `border_size` | Hyprland's `general.border_size` |
-| `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius` |
+| `border_size` | Hyprland's `general.border_size`, wlr-which-key's `border_width` |
+| `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius`, wlr-which-key's `corner_r` |
 | `rounding_power` | Hyprland's `decoration.rounding_power` |
 | `gaps.inner`, `gaps.outer` | Hyprland's `general.gaps_in`, `general.gaps_out` |
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |

@@ -3,10 +3,11 @@
 
 const kosm = @import("kosm");
 
-/// Width of window borders in pixels: Hyprland's `general.border_size`. null: not written.
+/// Width of window borders in pixels: Hyprland's `general.border_size`, wlr-which-key's
+/// `border_width`. null: not written.
 border_size: ?u32 = null,
 /// Corner radius in pixels: Hyprland's windows, hyprtoolkit's large elements (its small ones
-/// get half), Zen's content. null: not written.
+/// get half), Zen's content, wlr-which-key's menu. null: not written.
 rounding: ?u32 = null,
 /// How round corners are, 2 being a circle: Hyprland's `decoration.rounding_power`.
 /// null: not written.
