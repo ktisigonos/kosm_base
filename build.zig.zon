@@ -53,8 +53,8 @@
             .hash = "kosm_wlr_which_key-0.0.0-x7N1FAUcAADzrJjIhtiehSdRtnsnwMLyBlojdV2M8ND9",
         },
         .kosm_vicinae = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#6da9a64bae06fa819c94fe22b864db02ed93a373",
-            .hash = "kosm_vicinae-0.0.0-xyIR2O6LAAB0Ett5y-_fbMcRztbl4ZVGLiED679sjLZW",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#4b3975b2eb2689ab0094d7214de0a689ff10d638",
+            .hash = "kosm_vicinae-0.0.0-xyIR2P7aAAAFwm48SYuHt0v4CrhN3UU-_DtfR5rgWhJX",
         },
         .kosm_tuios = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_tuios?ref=master#862021209b22723fdfaf1c2137935b91d324d6df",

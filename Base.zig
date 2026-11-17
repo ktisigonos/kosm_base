@@ -255,8 +255,7 @@ pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
         kitty.fonts.font_size = fonts.size;
     }
     if (base.vicinae) |*vicinae| {
-        vicinae.font_family = main;
-        vicinae.font_size = fonts.size;
+        vicinae.font.normal = .{ .family = main, .size = fonts.size };
     }
     if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = comptime std.fmt.comptimePrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.plus(fonts.deltas.large) });
     // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
@@ -341,10 +340,10 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     if (base.qtct) |*qtct| qtct.icon_theme = icon_theme;
     if (base.vicinae) |*vicinae| {
         if (icon_theme) |name| vicinae.icon_theme = name;
-        if (values.rounding) |rounding| vicinae.rounding = rounding;
-        if (values.border_size) |size| vicinae.border_width = size;
-        if (values.shadow.range) |range| vicinae.shadow_size = range;
-        if (values.blur) |blur| vicinae.material = if (blur) .blur else .none;
+        if (values.rounding) |rounding| vicinae.launcher_window.rounding = rounding;
+        if (values.border_size) |size| vicinae.launcher_window.client_side_decorations.border_width = size;
+        if (values.shadow.range) |range| vicinae.launcher_window.client_side_decorations.shadow_size = range;
+        if (values.blur) |blur| vicinae.launcher_window.material = if (blur) .blur else .none;
         if (active_border) |color| vicinae.colors.core.border = color;
     }
     if (base.wlr_which_key) |*wlr_which_key| {
@@ -555,7 +554,7 @@ test "fonts reach every app that has them" {
     try testing.expect(base.hyprland.?.misc.disable_hyprland_logo.?);
     try testing.expectEqual(2, base.foot.?.main.font.?.len);
     try testing.expectEqualStrings("Noto Sans", base.foot.?.main.font.?[1].family);
-    try testing.expectEqual(13, base.vicinae.?.font_size.?);
+    try testing.expectEqual(13, base.vicinae.?.font.normal.size.?);
     try testing.expectEqualStrings("Maple Mono, Noto Sans 16", base.wlr_which_key.?.font.?);
     try testing.expectEqual(25, base.hyprtoolkit.?.h1_size.?);
     try testing.expectEqual(9, base.hyprtoolkit.?.small_font_size.?);
@@ -619,10 +618,10 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(12, base.dunst.?.global.corner_radius.?);
     const vicinae = base.vicinae.?;
     try testing.expectEqual(gray, vicinae.colors.core.border.?);
-    try testing.expectEqual(12, vicinae.rounding.?);
-    try testing.expectEqual(2, vicinae.border_width.?);
-    try testing.expectEqual(15, vicinae.shadow_size.?);
-    try testing.expectEqual(.none, vicinae.material.?);
+    try testing.expectEqual(12, vicinae.launcher_window.rounding.?);
+    try testing.expectEqual(2, vicinae.launcher_window.client_side_decorations.border_width.?);
+    try testing.expectEqual(15, vicinae.launcher_window.client_side_decorations.shadow_size.?);
+    try testing.expectEqual(.none, vicinae.launcher_window.material.?);
     try testing.expect(!base.ghostty.?.background_blur.?.boolean);
     try testing.expectEqual(0, base.kitty.?.colors.background_blur.?);
     try testing.expect(!base.foot.?.colors_dark.blur.?);
@@ -672,7 +671,7 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("282e22")), base.hyprland.?.general.col.inactive_border.?);
     try testing.expectEqual(kosm.hex("282e22"), base.kitty.?.window.inactive_border_color.?);
     try testing.expectEqual(look.theme.roles.accent, base.kitty.?.window.active_border_color.?.color);
-    try testing.expectEqual(.blur, base.vicinae.?.material.?);
+    try testing.expectEqual(.blur, base.vicinae.?.launcher_window.material.?);
     try testing.expectEqual(1, base.kitty.?.colors.background_blur.?);
     try testing.expect(base.foot.?.colors_dark.blur.?);
 }
@@ -685,8 +684,8 @@ test "values left null leave every app's setting unwritten" {
     try testing.expectEqual(null, base.kitty.?.window.window_padding_width);
     try testing.expectEqual(null, base.hyprland.?.general.col.inactive_border);
     try testing.expectEqual(null, base.hyprland.?.decoration.blur.enabled);
-    try testing.expectEqual(null, base.vicinae.?.rounding);
-    try testing.expectEqual(null, base.vicinae.?.material);
+    try testing.expectEqual(null, base.vicinae.?.launcher_window.rounding);
+    try testing.expectEqual(null, base.vicinae.?.launcher_window.material);
     try testing.expectEqual(null, base.dunst.?.global.corner_radius);
     try testing.expectEqual(null, base.blender.?.rounding);
     try testing.expectEqual(null, base.kitty.?.colors.background_blur);
