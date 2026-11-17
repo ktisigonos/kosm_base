@@ -57,7 +57,7 @@ fastfetch out through the app's fields (`kosm_fastfetch`'s README) or leave it o
 owns `~/.config/oh-my-posh/kosm.json` the same way; point `oh-my-posh init` at it, and run
 `oh-my-posh enable reload` once so open shells follow an apply (`kosm_ohmyposh`'s README).
 `icons` writes BeautyLine in the theme's colors to `~/.local/share/icons/kosm` (thousands of files,
-shown as one line in a diff), which GTK, KDE, hyprtoolkit and Vicinae then pick; `kosm_icons`' README has a
+shown as one line in a diff), which GTK, KDE, qt5ct, qt6ct, hyprtoolkit and Vicinae then pick; `kosm_icons`' README has a
 system theme instead.
 `cursor` writes Bibata in the theme's colors to `~/.local/share/icons/kosm_cursor`, for XCursor
 and hyprcursor, which GTK and Hyprland then pick; it needs the `resvg` library to build
@@ -114,6 +114,6 @@ not written, so each program's own default applies.
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` |
 | `blur` | Hyprland's `decoration.blur.enabled`, Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur` (KDE and macOS only); how translucent windows are is the theme's `background_alpha` |
 | `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*`; null name picks the `cursor` app's theme, and the size is also the one `cursor` tells Hyprland to reload at |
-| `icon_theme` | GTK's, KDE's, hyprtoolkit's and Vicinae's icon theme; null picks the `icons` app's theme |
+| `icon_theme` | GTK's, KDE's, qt5ct's and qt6ct's, hyprtoolkit's and Vicinae's icon theme; null picks the `icons` app's theme |
 | `keyboard` | Hyprland's `input.kb_*` (a `kosm.Keyboard`) |
 | `editor` | kitty's `editor` |

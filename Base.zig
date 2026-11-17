@@ -76,7 +76,7 @@ hyprmouse: ?kosm_hyprmouse.App,
 hyprpaper: ?kosm_hyprpaper.App,
 /// hyprtoolkit apps' colors and fonts. null: not riced.
 hyprtoolkit: ?kosm_hyprtoolkit.App,
-/// An icon theme in the theme's colors (BeautyLine), which GTK, KDE and hyprtoolkit pick.
+/// An icon theme in the theme's colors (BeautyLine), which GTK, KDE, Qt and hyprtoolkit pick.
 /// null: not riced.
 icons: ?kosm_icons.App,
 /// KDE's color scheme and kdeglobals. null: not riced.
@@ -309,6 +309,7 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     if (base.kde) |*kde| if (icon_theme) |name| {
         kde.icon_theme = name;
     };
+    if (base.qtct) |*qtct| qtct.icon_theme = icon_theme;
     if (base.vicinae) |*vicinae| {
         if (icon_theme) |name| vicinae.icon_theme = name;
         if (values.rounding) |rounding| vicinae.rounding = rounding;
@@ -381,8 +382,8 @@ const adapters = blk: {
 const existing = [_]struct { []const u8, []const u8 }{
     .{ ".local/share/Steam/steamapps/common/Half-Life/valve/resource/TrackerScheme.res", "Scheme\n{\n\tColors\n\t{\n" ++ scheme_colors ++ "\t}\n\tFonts\n\t{\n\t\t\"Default\" { \"1\" { \"name\" \"Tahoma\" } }\n\t}\n}\n" },
     .{ ".config/hypr/hyprmouse.conf", "font = Sans\nfont_size = 25\nbackground_color = #000000\ngrid_color = #000000\ndot_color = #000000\ntext_color = #000000\ntext_outline_color = #000000\nbackground_opacity = 1\n" },
-    .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\n" },
-    .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\n" },
+    .{ ".config/qt5ct/qt5ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt5ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n" },
+    .{ ".config/qt6ct/qt6ct.conf", "[Appearance]\ncolor_scheme_path=/usr/share/qt6ct/colors/airy.conf\ncustom_palette=false\nicon_theme=breeze\n" },
     .{ ".config/tuios/config.toml", "[appearance]\ntheme = \"default\"\n" },
     .{ ".zen/test.Default/prefs.js", "user_pref(\"browser.startup.page\", 3);\n" },
     .{ ".zen/test.Default/zen-themes.json", "{\"kosm\": {\"id\": \"kosm\", \"preferences\": \"preferences.json\", \"enabled\": true}}\n" },
@@ -661,8 +662,9 @@ test "with no cursor name, GTK and Hyprland pick the cursor app's theme, and the
     try testing.expectEqual(null, without_cursor.hyprland.?.cursor_theme);
 }
 
-test "with no icon_theme, GTK, KDE, hyprtoolkit and Vicinae pick the icons app's theme" {
+test "with no icon_theme, GTK, KDE, qt5ct, qt6ct, hyprtoolkit and Vicinae pick the icons app's theme" {
     const base = from(test_look, .all);
+    try testing.expectEqualStrings("kosm", base.qtct.?.icon_theme.?);
     try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
     try testing.expectEqualStrings("kosm", base.kde.?.icon_theme.?);
     try testing.expectEqualStrings("kosm", base.hyprtoolkit.?.icon_theme.?);
