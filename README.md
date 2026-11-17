@@ -110,8 +110,8 @@ not written, so each program's own default applies.
 | Field | Apps |
 |---|---|
 | `border_size` | Hyprland's `general.border_size`, wlr-which-key's `border_width`, Vicinae's `border_width`, dunst's `frame_width` |
-| `borders.active` | Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's `border`, Vicinae's `core.border`, dunst's `frame_color` (critical keeps the error role), Zen's glance outline; null: each app's accent |
-| `borders.inactive` | Hyprland's `general.col.inactive_border`, kitty's `inactive_border_color`; null: derived from `borders.active` through the theme's `state.inactive` |
+| `borders.active` | Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's `border`, Vicinae's `core.border`, dunst's `frame_color` (critical keeps the error role), Zen's glance outline; `.{ .role = .accent }` follows the worn theme, `.{ .color = ... }` is fixed; null: each app's accent |
+| `borders.inactive` | Hyprland's `general.col.inactive_border`, kitty's `inactive_border_color`; a role or a color, as `borders.active`; null: derived from `borders.active` through the theme's `state.inactive` |
 | `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius`, wlr-which-key's `corner_r`, Vicinae's `rounding`, dunst's `corner_radius` |
 | `rounding_power` | Hyprland's `decoration.rounding_power` |
 | `gaps.inner`, `gaps.outer` | Hyprland's `general.gaps_in`, `general.gaps_out` |

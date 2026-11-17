@@ -281,8 +281,9 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     if (base.cursor) |*cursor| if (values.cursor.size) |size| {
         cursor.size = size;
     };
-    const active_border = values.borders.active;
-    const inactive_border = values.borders.inactive orelse
+    const active_border = if (values.borders.active) |color| color.resolve(theme) else null;
+    const set_inactive_border = if (values.borders.inactive) |color| color.resolve(theme) else null;
+    const inactive_border = set_inactive_border orelse
         if (active_border) |active| theme.variations.state.inactive.apply(active) else null;
     if (base.dunst) |*dunst| {
         if (values.border_size) |size| dunst.global.frame_width = size;
@@ -343,13 +344,15 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             profile.prefs.zen.theme.border_radius = @intCast(rounding);
         };
     }
-    if (base.hyprland) |*hyprland| setHyprland(hyprland, values, cursor_theme);
+    if (base.hyprland) |*hyprland| setHyprland(hyprland, values, active_border, set_inactive_border, cursor_theme);
 }
 
-fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, cursor_theme: ?[]const u8) void {
+/// Hyprland's shared values; its inactive border is set only when the look sets one, as Hyprland
+/// derives its own.
+fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, active_border: ?kosm.Color, inactive_border: ?kosm.Color, cursor_theme: ?[]const u8) void {
     if (values.border_size) |size| hyprland.general.border_size = size;
-    if (values.borders.active) |color| hyprland.general.col.active_border = .solid(color);
-    if (values.borders.inactive) |color| hyprland.general.col.inactive_border = .solid(color);
+    if (active_border) |color| hyprland.general.col.active_border = .solid(color);
+    if (inactive_border) |color| hyprland.general.col.inactive_border = .solid(color);
     if (values.blur) |blur| hyprland.decoration.blur.enabled = blur;
     if (values.gaps.inner) |inner| hyprland.general.gaps_in = .all(inner);
     if (values.gaps.outer) |outer| hyprland.general.gaps_out = .all(outer);
@@ -570,7 +573,7 @@ test "each shared value reaches every app having that setting" {
         var look = test_look;
         look.values = .{
             .border_size = 2,
-            .borders = .{ .active = kosm.hex("808080") },
+            .borders = .{ .active = .{ .color = kosm.hex("808080") } },
             .rounding = 12,
             .rounding_power = 3,
             .gaps = .{ .inner = 4, .outer = 8 },
@@ -635,7 +638,7 @@ test "each shared value reaches every app having that setting" {
 test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicinae's blur" {
     const look: Look = comptime blk: {
         var look = test_look;
-        look.values.borders.inactive = kosm.hex("282e22");
+        look.values.borders.inactive = .{ .color = kosm.hex("282e22") };
         look.values.blur = true;
         break :blk look;
     };
@@ -723,6 +726,25 @@ test "a theme known only at run time wears the look, and its tweak sees that the
     const base = fromTheme(look, theme, .{ .only = &.{.ghostty} });
     try testing.expectApproxEqAbs(0.3, base.ghostty.?.background.?.lightness, 1e-9);
     try testing.expectEqualStrings("#00ffff", base.ghostty.?.foreground.?.hex().slice());
+}
+
+test "borders set to roles follow the theme the look is worn with" {
+    const look: Look = comptime blk: {
+        var look = test_look;
+        look.values.borders = .{ .active = .{ .role = .accent }, .inactive = .{ .role = .secondary } };
+        break :blk look;
+    };
+    const worn: kosm.Theme = .from(.{ .palette = .{
+        .black = kosm.hex("000000"),
+        .white = kosm.hex("ffffff"),
+        .red = kosm.hex("ff0000"),
+        .yellow = kosm.hex("ffff00"),
+    }, .mode = .dark, .roles = .{ .accent = kosm.hex("ff0000"), .secondary = kosm.hex("ffff00") } });
+    const base = fromTheme(look, worn, .{ .only = &.{ .kitty, .hyprland } });
+    try testing.expectEqual(kosm.hex("ff0000"), base.kitty.?.window.active_border_color.?.color);
+    try testing.expectEqual(kosm.hex("ffff00"), base.kitty.?.window.inactive_border_color.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("ff0000")), base.hyprland.?.general.col.active_border.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("ffff00")), base.hyprland.?.general.col.inactive_border.?);
 }
 
 /// An app of a user's own, outside the official base.

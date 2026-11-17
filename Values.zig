@@ -50,12 +50,30 @@ pub const Borders = struct {
     /// The focused window's border, and the frame of menus, the launcher and notifications:
     /// Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's
     /// `border`, Vicinae's `core.border`, dunst's `frame_color` (critical ones keep the error
-    /// role), Zen's glance outline. null: each app's own, the accent role.
-    active: ?kosm.Color = null,
+    /// role), Zen's glance outline. A role follows the theme the look is worn with. null:
+    /// each app's own, the accent role.
+    active: ?BorderColor = null,
     /// Unfocused windows' borders: Hyprland's `general.col.inactive_border`, kitty's
     /// `inactive_border_color`. null: derived from `active` through the theme's
     /// `state.inactive`, as each app does from the accent.
-    inactive: ?kosm.Color = null,
+    inactive: ?BorderColor = null,
+};
+
+/// A border's color: a role of the theme the look is worn with, so it follows that theme (one
+/// taken from an image too), or a fixed color.
+pub const BorderColor = union(enum) {
+    /// This role's color in the worn theme: `.{ .role = .accent }`.
+    role: kosm.Theme.Roles.Name,
+    /// This color, whatever the theme: `.{ .color = kosm.hex("2e8799") }`.
+    color: kosm.Color,
+
+    /// The color in `theme`.
+    pub fn resolve(border_color: BorderColor, theme: kosm.Theme) kosm.Color {
+        return switch (border_color) {
+            .role => |name| theme.roles.get(name),
+            .color => |color| color,
+        };
+    }
 };
 
 /// Window shadows.
