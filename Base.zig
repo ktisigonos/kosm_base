@@ -83,7 +83,7 @@ icons: ?kosm_icons.App,
 kde: ?kosm_kde.App,
 /// kitty's colors and font. null: not riced.
 kitty: ?kosm_kitty.App,
-/// Neovim's base16 colors. null: not riced.
+/// Neovim's highlight groups and terminal colors. null: not riced.
 nvim: ?kosm_nvim.App,
 /// Oh My Posh's whole prompt config: its layout and palette. null: not riced.
 ohmyposh: ?kosm_ohmyposh.App,
