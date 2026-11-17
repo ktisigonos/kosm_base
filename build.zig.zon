@@ -129,8 +129,8 @@
             .hash = "kosm_equibop-0.0.0-5EztXYgmAADQtuGHk-bnVb5M5YunkDtjy4Gvf1exkZtM",
         },
         .kosm_dunst = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#9628a6566425aba5aa629bda6b26b7ad220cd97f",
-            .hash = "kosm_dunst-0.0.0-bFXk7UY1AABTkH1ciK6UIC8bmzSjYfmLZpvLcCrY0ooc",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#141fdbb9cd7af603e619e1acf2239b563460ed42",
+            .hash = "kosm_dunst-0.0.0-bFXk7UyqAAC5MDFt4Uk0msqaE240AV-FF3SCd_Gvl8UG",
         },
         .kosm_firefox = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#eef56e5121bf2e1213d168ecac27823f55cdf840",
