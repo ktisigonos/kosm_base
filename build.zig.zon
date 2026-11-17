@@ -113,8 +113,8 @@
             .hash = "kosm_gtk-0.0.0-4gGwZq_TAACOF6vOLCGbhdb86eJmKehIbq2YLnaR9mO6",
         },
         .kosm_ghostty = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ghostty?ref=master#f9736501ad77b1fe7bb06a65356e29daf7a5e9e0",
-            .hash = "kosm_ghostty-0.0.0-l99CQShlAgCym7gINuDZUbazpaW5V5T8OffhYt97dXww",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ghostty?ref=master#11a3cfc49ca5752bde909ac5a1b8d6af78825717",
+            .hash = "kosm_ghostty-0.0.0-l99CQYxrAgCvGcIFwLvrbB0QZLXEuSI7Rlnpwg0L1UlU",
         },
         .kosm_foot = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_foot?ref=master#df6306718ed931c555d9050c9d8ced0eb038af3f",
@@ -137,8 +137,8 @@
             .hash = "kosm_firefox-0.0.0-UE8nmHlaBgCB6zdNWVCPawV6Eoocaeggs2NmkWuDKPiS",
         },
         .kosm_blender = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#a8c376fcdc2e9ca48eef08b077c67349800062da",
-            .hash = "kosm_blender-0.0.0-_ubM3KGPAAChT8LvNO7ru08xomfrviijkntFl_GMfkYp",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#720a02b76e150782242e70c50fd93c02d31b4726",
+            .hash = "kosm_blender-0.0.0-_ubM3AOKAQCESeLZVZ-Mhrhms2a_HtHUnQvS283FoucE",
         },
         .kosm_commet = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_commet?ref=master#168a4c95a58b54b0750ce5549781bc9d54431a29",

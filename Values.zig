@@ -9,8 +9,8 @@ border_size: ?u32 = null,
 /// Colors of window borders.
 borders: Borders = .{},
 /// Corner radius in pixels: Hyprland's windows, hyprtoolkit's large elements (its small ones
-/// get half), Zen's content, wlr-which-key's menu, Vicinae's window, dunst's notifications.
-/// null: not written.
+/// get half), Zen's content, wlr-which-key's menu, Vicinae's window, dunst's notifications,
+/// Blender's widgets and panels, Commet's panels. null: not written.
 rounding: ?u32 = null,
 /// How round corners are, 2 being a circle: Hyprland's `decoration.rounding_power`.
 /// null: not written.
@@ -23,8 +23,10 @@ padding: ?u32 = null,
 /// Window shadows.
 shadow: Shadow = .{},
 /// Whether translucent windows blur what is behind them: Hyprland's `decoration.blur.enabled`,
-/// Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur` (drawn by KDE and
-/// macOS only). Translucency itself is the theme's `background_alpha`. null: not written.
+/// Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur`, kitty's
+/// `background_blur` and foot's `blur` in both
+/// color themes (the terminals' own blur is drawn only by
+/// compositors that offer it, such as KDE's; Hyprland blurs them by itself). Translucency itself is the theme's `background_alpha`. null: not written.
 blur: ?bool = null,
 /// The pointer.
 cursor: Cursor = .{},
@@ -79,7 +81,8 @@ pub const BorderColor = union(enum) {
 /// Window shadows.
 pub const Shadow = struct {
     /// How far the shadow reaches, in pixels: Hyprland's `decoration.shadow.range`, Vicinae's
-    /// `shadow_size`. null: not written.
+    /// `shadow_size`, Blender's menu and panel shadows (times its `shadow_scale`). null: not
+    /// written.
     range: ?u32 = null,
     /// How fast the shadow fades, 1 to 4: Hyprland's `decoration.shadow.render_power`.
     /// null: not written.

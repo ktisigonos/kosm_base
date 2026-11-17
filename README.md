@@ -112,12 +112,12 @@ not written, so each program's own default applies.
 | `border_size` | Hyprland's `general.border_size`, wlr-which-key's `border_width`, Vicinae's `border_width`, dunst's `frame_width` |
 | `borders.active` | Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's `border`, Vicinae's `core.border`, dunst's `frame_color` (critical keeps the error role), Zen's glance outline; `.{ .role = .accent }` follows the worn theme, `.{ .color = ... }` is fixed; null: each app's accent |
 | `borders.inactive` | Hyprland's `general.col.inactive_border`, kitty's `inactive_border_color`; a role or a color, as `borders.active`; null: derived from `borders.active` through the theme's `state.inactive` |
-| `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius`, Firefox's forced page corners (off until `firefox.enabled.corners` or the toolbar button turns them on), wlr-which-key's `corner_r`, Vicinae's `rounding`, dunst's `corner_radius` |
+| `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius`, Firefox's forced page corners (off until `firefox.enabled.corners` or the toolbar button turns them on), wlr-which-key's `corner_r`, Vicinae's `rounding`, dunst's `corner_radius`, Blender's `rounding` (its widgets' and panels' roundness), Commet's `caulk_border_radius` |
 | `rounding_power` | Hyprland's `decoration.rounding_power` |
 | `gaps.inner`, `gaps.outer` | Hyprland's `general.gaps_in`, `general.gaps_out` |
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
-| `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` |
-| `blur` | Hyprland's `decoration.blur.enabled`, Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur` (KDE and macOS only); how translucent windows are is the theme's `background_alpha` |
+| `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` and Blender's `shadow_range` (menu shadows, times its `shadow_scale`) |
+| `blur` | Hyprland's `decoration.blur.enabled`, Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur`, kitty's `background_blur` (1 or 0) and foot's `blur` in both color themes (drawn by compositors offering it, such as KDE; Hyprland blurs on its own); how translucent windows are is the theme's `background_alpha` |
 | `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*`; null name picks the `cursor` app's theme, and the size is also the one `cursor` tells Hyprland to reload at |
 | `icon_theme` | GTK's, KDE's, qt5ct's and qt6ct's, hyprtoolkit's and Vicinae's icon theme; null picks the `icons` app's theme |
 | `keyboard` | Hyprland's `input.kb_*` (a `kosm.Keyboard`) |

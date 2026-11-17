@@ -293,6 +293,13 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             dunst.urgency_normal.frame_color = color;
         }
     }
+    if (base.blender) |*blender| {
+        blender.rounding = values.rounding;
+        blender.shadow_range = values.shadow.range;
+    }
+    if (base.commet) |*commet| if (values.rounding) |rounding| {
+        commet.settings.caulk_border_radius = @floatFromInt(rounding);
+    };
     if (base.ghostty) |*ghostty| {
         if (values.padding) |padding| {
             ghostty.window_padding_x = .all(padding);
@@ -300,12 +307,18 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
         }
         if (values.blur) |blur| ghostty.background_blur = .{ .boolean = blur };
     }
-    if (base.foot) |*foot| if (values.padding) |padding| {
-        foot.main.pad = .all(padding);
-    };
+    if (base.foot) |*foot| {
+        if (values.padding) |padding| foot.main.pad = .all(padding);
+        if (values.blur) |blur| {
+            foot.colors_dark.blur = blur;
+            foot.colors_light.blur = blur;
+        }
+    }
     if (base.kitty) |*kitty| {
         if (values.padding) |padding| kitty.window.window_padding_width = .all(@floatFromInt(padding));
         if (values.editor) |editor| kitty.advanced.editor = editor;
+        // Any positive value turns kitty's blur on; only macOS reads it as a radius.
+        if (values.blur) |blur| kitty.colors.background_blur = if (blur) 1 else 0;
         if (active_border) |color| kitty.window.active_border_color = .{ .color = color };
         if (inactive_border) |color| kitty.window.inactive_border_color = color;
     }
@@ -610,6 +623,12 @@ test "each shared value reaches every app having that setting" {
     try testing.expectEqual(15, vicinae.shadow_size.?);
     try testing.expectEqual(.none, vicinae.material.?);
     try testing.expect(!base.ghostty.?.background_blur.?.boolean);
+    try testing.expectEqual(0, base.kitty.?.colors.background_blur.?);
+    try testing.expect(!base.foot.?.colors_dark.blur.?);
+    try testing.expect(!base.foot.?.colors_light.blur.?);
+    try testing.expectEqual(12, base.blender.?.rounding.?);
+    try testing.expectEqual(15, base.blender.?.shadow_range.?);
+    try testing.expectEqual(12, base.commet.?.settings.caulk_border_radius.?);
     try testing.expectEqual(2, hyprland.general.border_size.?);
     try testing.expectEqual(kosm_hyprland.values.CssGap.all(4), hyprland.general.gaps_in.?);
     try testing.expectEqual(kosm_hyprland.values.CssGap.all(8), hyprland.general.gaps_out.?);
@@ -652,6 +671,8 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     try testing.expectEqual(kosm.hex("282e22"), base.kitty.?.window.inactive_border_color.?);
     try testing.expectEqual(look.theme.roles.accent, base.kitty.?.window.active_border_color.?.color);
     try testing.expectEqual(.blur, base.vicinae.?.material.?);
+    try testing.expectEqual(1, base.kitty.?.colors.background_blur.?);
+    try testing.expect(base.foot.?.colors_dark.blur.?);
 }
 
 test "values left null leave every app's setting unwritten" {
@@ -665,6 +686,8 @@ test "values left null leave every app's setting unwritten" {
     try testing.expectEqual(null, base.vicinae.?.rounding);
     try testing.expectEqual(null, base.vicinae.?.material);
     try testing.expectEqual(null, base.dunst.?.global.corner_radius);
+    try testing.expectEqual(null, base.blender.?.rounding);
+    try testing.expectEqual(null, base.kitty.?.colors.background_blur);
     try testing.expectEqualStrings("kosm", base.gtk.?.settings.gtk_icon_theme_name.?);
     const without_icons = from(test_look, .{ .except = &.{.icons} });
     try testing.expectEqual(null, without_icons.gtk.?.settings.gtk_icon_theme_name);
