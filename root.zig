@@ -12,6 +12,8 @@ pub const Fonts = @import("Fonts.zig");
 pub const Values = @import("Values.zig");
 /// The chosen apps from a look.
 pub const from = Base.from;
+/// The chosen apps from a look, worn with another theme, which may be known only at run time.
+pub const fromTheme = Base.fromTheme;
 /// Which of the base's apps a kosmos turns on: `.all`, `.none`, `.{ .only = &.{ .kitty } }` or
 /// `.{ .except = &.{ .zen } }`.
 pub const Apps = Base.Apps;

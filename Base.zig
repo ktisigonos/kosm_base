@@ -168,7 +168,13 @@ comptime {
 /// headings and small text) and each of its values set in
 /// every app having that setting; then the look's tweak.
 pub fn from(comptime look: Look, apps: Apps) Base {
-    const theme = look.theme;
+    return fromTheme(look, look.theme, apps);
+}
+
+/// Like `from`, with `theme` in place of the look's own, so a theme known only at run time (one
+/// taken from an image in the kosmos' `Params`) wears the look's fonts, values and tweak. The
+/// tweak gets the look with that theme.
+pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
     const fonts = look.fonts;
     if (fonts.families.len == 0) @compileError("the base needs at least one font family");
     const main = fonts.families[0];
@@ -258,7 +264,11 @@ pub fn from(comptime look: Look, apps: Apps) Base {
         profile.live = true;
     };
     base.setValues(look.values, theme);
-    if (look.tweak) |tweak| tweak(&base, look);
+    if (look.tweak) |tweak| {
+        var worn = look;
+        worn.theme = theme;
+        tweak(&base, worn);
+    }
     return base;
 }
 
@@ -691,6 +701,28 @@ test "the look's tweak runs after the fonts and values are handed out" {
     const base = from(look, .{ .only = &.{.ghostty} });
     try testing.expectEqual(kosm_ghostty.values.Padding.all(20), base.ghostty.?.window_padding_x.?);
     try testing.expectEqual(kosm_ghostty.values.Padding.all(10), base.ghostty.?.window_padding_y.?);
+}
+
+fn foregroundTweak(base: *Base, look: Look) void {
+    base.ghostty.?.foreground = look.theme.roles.accent;
+}
+
+test "a theme known only at run time wears the look, and its tweak sees that theme" {
+    var lightness: f64 = 0.3;
+    std.mem.doNotOptimizeAway(&lightness);
+    const theme: kosm.Theme = .from(.{ .palette = .{
+        .black = .{ .lightness = lightness, .chroma = 0, .hue = 0 },
+        .white = kosm.hex("ffffff"),
+        .cyan = kosm.hex("00ffff"),
+    }, .mode = .dark });
+    const look: Look = comptime blk: {
+        var look = test_look;
+        look.tweak = foregroundTweak;
+        break :blk look;
+    };
+    const base = fromTheme(look, theme, .{ .only = &.{.ghostty} });
+    try testing.expectApproxEqAbs(0.3, base.ghostty.?.background.?.lightness, 1e-9);
+    try testing.expectEqualStrings("#00ffff", base.ghostty.?.foreground.?.hex().slice());
 }
 
 /// An app of a user's own, outside the official base.

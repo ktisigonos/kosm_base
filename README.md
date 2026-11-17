@@ -25,6 +25,10 @@ pub fn kosmos() base.Base {
 at 13, square corners, every other value the program's own. A look is known at compile time,
 written as a `const`.
 
+A theme known only at run time, like one taken from a wallpaper (`kosm.Image` in the kosmos'
+`Params`), wears a look through `base.fromTheme(look, theme, apps)`: the look's fonts, values
+and tweak with that theme in place of its own.
+
 Hyprland's logo and splash text are off, so behind the wallpaper is the theme's background
 alone and switching wallpapers only flashes that color.
 
