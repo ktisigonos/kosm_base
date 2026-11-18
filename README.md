@@ -22,8 +22,9 @@ pub fn kosmos() base.Base {
 ```
 
 `base.Look.default` is the literal look: pure black, white and hues (`#ff0000`, ...), monospace
-at 13, square corners, every other value the program's own. A look is known at compile time,
-written as a `const`.
+at 13, square corners, every other value the program's own. A look may be a `const` or built at
+run time, so a look written in a script (Lua) gives a base too:
+`kosm_base.from({ theme = theme, fonts = { families = { "Maple Mono" }, size = 13 } }, "all")`.
 
 A theme known only at run time, like one taken from a wallpaper (`kosm.Image` in the kosmos'
 `Params`), wears a look through `base.fromTheme(look, theme, apps)`: the look's fonts, values
@@ -83,6 +84,8 @@ Text with a role of its own gets the size plus that role's delta, so every size 
 wlr-which-key gets every family at the `large` size as one Pango font (`Maple Mono, Noto Sans 16`),
 and hyprtoolkit its headings, body and small text (h1 `heading`, h2 `subheading`, h3 and body
 the size, small text `small`, rounded to whole points).
+
+A look with no family hands out only the sizes, so each program keeps its own font.
 
 | Field | Meaning |
 |---|---|

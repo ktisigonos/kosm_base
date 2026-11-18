@@ -167,17 +167,14 @@ comptime {
 /// size for terminals, notifications, the launcher and GTK, moved by its deltas for menus,
 /// headings and small text) and each of its values set in
 /// every app having that setting; then the look's tweak.
-pub fn from(comptime look: Look, apps: Apps) Base {
+pub fn from(look: Look, apps: Apps) Base {
     return fromTheme(look, look.theme, apps);
 }
 
 /// Like `from`, with `theme` in place of the look's own, so a theme known only at run time (one
 /// taken from an image in the kosmos' `Params`) wears the look's fonts, values and tweak. The
 /// tweak gets the look with that theme.
-pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
-    const fonts = look.fonts;
-    if (fonts.families.len == 0) @compileError("the base needs at least one font family");
-    const main = fonts.families[0];
+pub fn fromTheme(look: Look, theme: kosm.Theme, apps: Apps) Base {
     var base: Base = .{
         .adwsteamgtk = if (apps.has(.adwsteamgtk)) kosm_adwsteamgtk.from(theme) else null,
         .blender = if (apps.has(.blender)) kosm_blender.from(theme) else null,
@@ -208,6 +205,34 @@ pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
         .wlr_which_key = if (apps.has(.wlr_which_key)) kosm_wlr_which_key.from(theme) else null,
         .zen = if (apps.has(.zen)) kosm_zen.from(theme) else null,
     };
+    base.setFonts(look.fonts);
+    // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
+    if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
+        profile.live = true;
+    };
+    base.setValues(look.values, theme);
+    if (look.tweak) |tweak| {
+        var worn = look;
+        worn.theme = theme;
+        tweak(&base, worn);
+    }
+    return base;
+}
+
+/// Hands the fonts to every app with fonts; with no family, only the sizes, so each program
+/// keeps its own font.
+fn setFonts(base: *Base, fonts: Fonts) void {
+    if (base.ghostty) |*ghostty| ghostty.font_size = fonts.size;
+    if (base.kitty) |*kitty| kitty.fonts.font_size = fonts.size;
+    if (base.hyprtoolkit) |*hyprtoolkit| {
+        hyprtoolkit.h1_size = fonts.wholePlus(fonts.deltas.heading);
+        hyprtoolkit.h2_size = fonts.wholePlus(fonts.deltas.subheading);
+        hyprtoolkit.h3_size = fonts.wholePlus(0);
+        hyprtoolkit.font_size = fonts.wholePlus(0);
+        hyprtoolkit.small_font_size = fonts.wholePlus(fonts.deltas.small);
+    }
+    if (fonts.families.len == 0) return;
+    const main = fonts.families[0];
     if (base.counter_strike) |*counter_strike| counter_strike.font = main;
     if (base.counter_strike_2) |*counter_strike_2| counter_strike_2.font = main;
     if (base.dunst) |*dunst| dunst.global.font = .{ .families = fonts.families, .size = fonts.size };
@@ -218,19 +243,16 @@ pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
         fontconfig.serif = fonts.families;
         fontconfig.monospace = fonts.families;
     }
-    if (base.foot) |*foot| foot.main.font = comptime footFonts(fonts);
-    if (base.ghostty) |*ghostty| {
-        ghostty.font_family = fonts.families;
-        ghostty.font_size = fonts.size;
-    }
+    if (base.foot) |*foot| foot.main.font = footFonts(fonts);
+    if (base.ghostty) |*ghostty| ghostty.font_family = fonts.families;
     if (base.gtk) |*gtk| {
-        const font = comptime std.fmt.comptimePrint("{s} {d}", .{ main, fonts.size });
+        const font = kosm.keepPrint("{s} {d}", .{ main, fonts.size });
         gtk.settings.gtk_font_name = font;
         gtk.settings.monospace_font_name = font;
         gtk.settings.document_font_name = font;
     }
     if (base.hyprland) |*hyprland| {
-        hyprland.misc.font_family = comptime pangoFamilies(fonts.families);
+        hyprland.misc.font_family = pangoFamilies(fonts.families);
         // Behind the wallpaper is the theme's background alone, so a wallpaper switch only
         // flashes that color, not Hyprland's logo and default wallpaper.
         hyprland.misc.disable_hyprland_logo = true;
@@ -244,31 +266,12 @@ pub fn fromTheme(comptime look: Look, theme: kosm.Theme, apps: Apps) Base {
     if (base.hyprtoolkit) |*hyprtoolkit| {
         hyprtoolkit.font_family = main;
         hyprtoolkit.font_family_monospace = main;
-        hyprtoolkit.h1_size = fonts.wholePlus(fonts.deltas.heading);
-        hyprtoolkit.h2_size = fonts.wholePlus(fonts.deltas.subheading);
-        hyprtoolkit.h3_size = fonts.wholePlus(0);
-        hyprtoolkit.font_size = fonts.wholePlus(0);
-        hyprtoolkit.small_font_size = fonts.wholePlus(fonts.deltas.small);
     }
-    if (base.kitty) |*kitty| {
-        kitty.fonts.font_family = .{ .family = main };
-        kitty.fonts.font_size = fonts.size;
-    }
+    if (base.kitty) |*kitty| kitty.fonts.font_family = .{ .family = main };
     if (base.vicinae) |*vicinae| {
         vicinae.font.normal = .{ .family = main, .size = fonts.size };
     }
-    if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = comptime std.fmt.comptimePrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.plus(fonts.deltas.large) });
-    // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
-    if (base.zen) |*zen| if (zen.profile) |*profile| if (base.firefox != null) {
-        profile.live = true;
-    };
-    base.setValues(look.values, theme);
-    if (look.tweak) |tweak| {
-        var worn = look;
-        worn.theme = theme;
-        tweak(&base, worn);
-    }
-    return base;
+    if (base.wlr_which_key) |*wlr_which_key| wlr_which_key.font = kosm.keepPrint("{s} {d}", .{ pangoFamilies(fonts.families), fonts.plus(fonts.deltas.large) });
 }
 
 /// Sets each value that is not null in every app having that setting. With no `icon_theme`
@@ -382,17 +385,16 @@ fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, active_border: ?kos
 }
 
 /// foot's fonts: every family at the size, in fallback order.
-fn footFonts(comptime fonts: Fonts) []const kosm_foot.App.values.Font {
-    var list: [fonts.families.len]kosm_foot.App.values.Font = undefined;
-    for (fonts.families, &list) |family, *font| font.* = .{ .family = family, .size = fonts.size };
-    const final = list;
-    return &final;
+fn footFonts(fonts: Fonts) []const kosm_foot.App.values.Font {
+    const list = kosm.keepList(kosm_foot.App.values.Font, fonts.families.len);
+    for (fonts.families, list) |family, *font| font.* = .{ .family = family, .size = fonts.size };
+    return list;
 }
 
 /// The families as one Pango list, `Main, Fallback`.
-fn pangoFamilies(comptime families: []const []const u8) []const u8 {
+fn pangoFamilies(families: []const []const u8) []const u8 {
     var list: []const u8 = families[0];
-    for (families[1..]) |family| list = list ++ ", " ++ family;
+    for (families[1..]) |family| list = kosm.keepPrint("{s}, {s}", .{ list, family });
     return list;
 }
 
@@ -560,6 +562,51 @@ test "fonts reach every app that has them" {
     try testing.expectEqual(9, base.hyprtoolkit.?.small_font_size.?);
     try testing.expectEqualStrings("Maple Mono", base.counter_strike.?.font.?);
     try testing.expectEqual(kosm_qtct.App.Font{ .family = "Maple Mono", .size = 13 }, base.qtct.?.fonts.fixed.?);
+}
+
+/// A base from a look built entirely at run time, as a script gives one.
+fn runTimeBase(size: f64) Base {
+    var families = [_][]const u8{ "Iosevka", "Noto Sans", "Symbols" };
+    std.mem.doNotOptimizeAway(&families);
+    const look: Look = .{
+        .theme = .from(.{ .palette = test_palette, .mode = .dark }),
+        .fonts = .{ .families = kosm.keep([]const u8, &families), .size = size },
+    };
+    return from(look, .all);
+}
+
+fn overwriteStack(seed: u8) u8 {
+    var buffer: [4096]u8 = @splat(seed);
+    std.mem.doNotOptimizeAway(&buffer);
+    return buffer[0];
+}
+
+test "a look known only at run time hands out its fonts, which outlive the call" {
+    var size: f64 = 12.5;
+    std.mem.doNotOptimizeAway(&size);
+    const base = runTimeBase(size);
+    _ = overwriteStack(0xff);
+    try testing.expectEqualStrings("Iosevka, Noto Sans, Symbols", base.hyprland.?.misc.font_family.?);
+    try testing.expectEqualStrings("Iosevka, Noto Sans, Symbols 15.5", base.wlr_which_key.?.font.?);
+    try testing.expectEqualStrings("Iosevka 12.5", base.gtk.?.settings.gtk_font_name.?);
+    try testing.expectEqual(3, base.foot.?.main.font.?.len);
+    try testing.expectEqualStrings("Symbols", base.foot.?.main.font.?[2].family);
+    try testing.expectEqual(12.5, base.foot.?.main.font.?[2].size);
+}
+
+test "a look with no font family hands out only the sizes, so each program keeps its font" {
+    var look = test_look;
+    look.fonts.families = &.{};
+    const base = from(look, .all);
+    try testing.expectEqual(null, base.hyprland.?.misc.font_family);
+    try testing.expectEqual(null, base.gtk.?.settings.gtk_font_name);
+    try testing.expectEqual(null, base.foot.?.main.font);
+    try testing.expectEqual(null, base.kitty.?.fonts.font_family);
+    try testing.expectEqual(13, base.kitty.?.fonts.font_size.?);
+    try testing.expectEqual(13, base.ghostty.?.font_size.?);
+    var planned: Planned = undefined;
+    try planOf(base, &planned);
+    defer planned.deinit();
 }
 
 test "role sizes follow the size and the look's deltas, rounded for apps taking whole points" {

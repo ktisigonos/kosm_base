@@ -149,8 +149,8 @@
             .hash = "kosm_adwsteamgtk-0.0.0-_esE6oI7AADntDmQj_U9AZlSCJL6Pr9QmVVolPfiCpfy",
         },
         .kosm = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#f827407739e5ab618dee1ec48e597cbd831140b6",
-            .hash = "kosm-0.0.0-YCShso99DQAXLyHK_Vy-r5uDXZpLzJoKnSg9mj-yq_Az",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#1e12f00dbf7b02408a486ceac246952ce4ab6720",
+            .hash = "kosm-0.0.0-YCShslCpEgAnrpuHToBd97oSWpTn1jz8VT38DQqQ78zU",
         },
         .kosm_fastfetch = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fastfetch?ref=master#dfd631324e818c76f5ba1f8c10706ead76edcc83",
