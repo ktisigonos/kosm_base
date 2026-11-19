@@ -14,6 +14,12 @@ pub const Values = @import("Values.zig");
 pub const from = Base.from;
 /// The chosen apps from a look, worn with another theme, which may be known only at run time.
 pub const fromTheme = Base.fromTheme;
+/// The base itself as a kosmos, `kosm apply kosm_base`: every app in the literal look
+/// (`Look.default`). It fails where an app edits a file the machine lacks (a game not installed).
+pub fn kosmos() Base {
+    return from(.default, .all);
+}
+
 /// Which of the base's apps a kosmos turns on: `.all`, `.none`, `.{ .only = &.{ .kitty } }` or
 /// `.{ .except = &.{ .zen } }`.
 pub const Apps = Base.Apps;

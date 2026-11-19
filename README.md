@@ -21,6 +21,9 @@ pub fn kosmos() base.Base {
 }
 ```
 
+The base is also a kosmos of its own: `kosm apply kosm_base` wears every app in the literal look,
+and fails naming the file where an app edits one the machine lacks (Counter-Strike not installed).
+
 `base.Look.default` is the literal look: pure black, white and hues (`#ff0000`, ...), monospace
 at 13, square corners, every other value the program's own. A look may be a `const` or built at
 run time, so a look written in a script (Lua) gives a base too:
