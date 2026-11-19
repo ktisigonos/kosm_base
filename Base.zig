@@ -97,6 +97,9 @@ vicinae: ?kosm_vicinae.App,
 wlr_which_key: ?kosm_wlr_which_key.App,
 /// Zen Browser's colors, logo and prefs. null: not riced.
 zen: ?kosm_zen.App,
+/// The theme every app was built from, as `kosm colors` shows it. Changing it changes no app:
+/// to recolor them, build the base again from a changed theme.
+theme: kosm.Theme,
 
 /// One of the base's apps, named as its field.
 pub const App = enum {
@@ -156,9 +159,10 @@ pub const Apps = union(enum) {
 comptime {
     const apps = @typeInfo(App).@"enum".field_names;
     const fields = @typeInfo(Base).@"struct".field_names;
-    if (apps.len != fields.len) @compileError("Base.App must name every field of Base, in order");
-    for (apps, fields) |app, field| {
-        if (!std.mem.eql(u8, app, field)) @compileError("Base.App must name every field of Base, in order");
+    // Every field but the last, `theme`, is an app.
+    if (apps.len != fields.len - 1) @compileError("Base.App must name every app field of Base, in order");
+    for (apps, fields[0..apps.len]) |app, field| {
+        if (!std.mem.eql(u8, app, field)) @compileError("Base.App must name every app field of Base, in order");
     }
 }
 
@@ -204,6 +208,7 @@ pub fn fromTheme(look: Look, theme: kosm.Theme, apps: Apps) Base {
         .vicinae = if (apps.has(.vicinae)) kosm_vicinae.from(theme) else null,
         .wlr_which_key = if (apps.has(.wlr_which_key)) kosm_wlr_which_key.from(theme) else null,
         .zen = if (apps.has(.zen)) kosm_zen.from(theme) else null,
+        .theme = theme,
     };
     base.setFonts(look.fonts);
     // Kosm Live, which firefox installs into Zen's profiles, sets their prefs in a running Zen.
@@ -477,7 +482,7 @@ fn planOf(kosmos: Base, planned: *Planned) !void {
         .app = "",
         .kosmos = "krystallos",
     };
-    inline for (@typeInfo(Base).@"struct".field_names) |name| {
+    inline for (@typeInfo(App).@"enum".field_names) |name| {
         if (@field(kosmos, name)) |app| {
             output.app = name;
             app.apply(&output) catch |err| {
@@ -499,7 +504,7 @@ test "a kosmos of a palette and two overrides rices every app through the base" 
     try planOf(kosmos, &planned);
     defer planned.deinit();
 
-    try testing.expect(planned.plan.files.items.len >= @typeInfo(Base).@"struct".field_names.len - 1);
+    try testing.expect(planned.plan.files.items.len >= @typeInfo(App).@"enum".field_names.len - 1);
     for (planned.plan.files.items) |file| {
         if (std.mem.eql(u8, file.display_path, "~/.config/kitty/kosm.conf"))
             try testing.expect(std.mem.indexOf(u8, file.new, "font_size 14\n") != null);
@@ -538,11 +543,20 @@ test "a kosmos enabling two apps plans only their files" {
     try testing.expect(planned.has("~/.config/ghostty/kosm"));
 }
 
+test "the base keeps the theme it wears, not the look's" {
+    var worn: kosm.Theme = .from(.{ .palette = .{ .black = kosm.hex("101010"), .white = kosm.hex("f0f0f0") }, .mode = .light });
+    worn.name = "Worn";
+    const base = fromTheme(test_look, worn, .none);
+    try testing.expectEqualStrings("Worn", base.theme.name.?);
+    try testing.expectEqual(.light, base.theme.mode);
+    try testing.expectEqual(.dark, from(test_look, .none).theme.mode);
+}
+
 test "apps left out are null" {
     const all = from(test_look, .all);
     const none = from(test_look, .none);
     const except = from(test_look, .{ .except = &.{ .zen, .kitty } });
-    inline for (@typeInfo(Base).@"struct".field_names) |name| {
+    inline for (@typeInfo(App).@"enum".field_names) |name| {
         try testing.expect(@field(all, name) != null);
         try testing.expect(@field(none, name) == null);
         const left_out = comptime std.mem.eql(u8, name, "zen") or std.mem.eql(u8, name, "kitty");

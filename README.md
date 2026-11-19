@@ -40,7 +40,9 @@ A kosmos adding apps of its own returns a struct holding the base and them:
 `struct { base: base.Base, mine: my_app.App }`, building its own from `look.theme`, so they
 follow the look's roles like the official ones.
 
-Every field of `Base` is the app of the package of its name (`kitty` is `kosm_kitty.App`).
+Every field of `Base` but `theme` is the app of the package of its name (`kitty` is
+`kosm_kitty.App`). `theme` holds the theme the apps were built from, which `kosm colors` shows;
+changing it changes no app.
 
 ## Choosing apps
 
