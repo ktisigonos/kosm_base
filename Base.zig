@@ -53,7 +53,7 @@ counter_strike_2: ?kosm_counter_strike_2.App,
 cursor: ?kosm_cursor.App,
 /// dunst's notifications. null: not riced.
 dunst: ?kosm_dunst.App,
-/// Equibop's QuickCSS colors and font. null: not riced.
+/// Equibop's theme over Material Discord: colors, font and rounding. null: not riced.
 equibop: ?kosm_equibop.App,
 /// fastfetch's whole config: its layout and colors. null: not riced.
 fastfetch: ?kosm_fastfetch.App,
@@ -305,6 +305,9 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
         blender.shadow_range = values.shadow.range;
         blender.border_size = values.border_size;
     }
+    if (base.equibop) |*equibop| if (values.rounding) |rounding| {
+        equibop.rounding = rounding;
+    };
     if (base.commet) |*commet| if (values.rounding) |rounding| {
         commet.settings.caulk_border_radius = @floatFromInt(rounding);
     };

@@ -11,7 +11,8 @@ border_size: ?u32 = null,
 borders: Borders = .{},
 /// Corner radius in pixels: Hyprland's windows, hyprtoolkit's large elements (its small ones
 /// get half), Zen's content, wlr-which-key's menu, Vicinae's window, dunst's notifications,
-/// Blender's widgets and panels, Commet's panels. null: not written.
+/// Blender's widgets and panels, Commet's panels, Equibop's messages and popouts. null: not
+/// written.
 rounding: ?u32 = null,
 /// How round corners are, 2 being a circle: Hyprland's `decoration.rounding_power`.
 /// null: not written.

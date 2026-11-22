@@ -125,8 +125,8 @@
             .hash = "kosm_fontconfig-0.0.0-rGFXaKgkAAARNRysyxEciKiWCeOnLn1XiuOl0eSafpIY",
         },
         .kosm_equibop = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_equibop?ref=master#680cfb8fbe26a2c5d34c7ffd31204ff324d9922b",
-            .hash = "kosm_equibop-0.0.0-5EztXYgmAADQtuGHk-bnVb5M5YunkDtjy4Gvf1exkZtM",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_equibop?ref=master#5b50fc69d95af6107c43119dc508688218ebe65b",
+            .hash = "kosm_equibop-0.0.0-5EztXdE_AADSQlfVUL9pSEDn8OfPDu8p_w2PFWJCUVAy",
         },
         .kosm_dunst = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#141fdbb9cd7af603e619e1acf2239b563460ed42",
