@@ -59,7 +59,7 @@ const blur_search_steps = 6;
 /// value afterwards to override it.
 pub fn fromImage(look: Look, image: kosm.Image, options: ImageOptions) kosm.Image.Error!Look {
     var theme: kosm.Theme = .from(try image.themeInput(options.colors));
-    const surface = try image.surface(options.measure);
+    const traits = try image.traits(options.colors);
     const window: kosm.Image.Window = .{ .background = theme.roles.background, .foreground = theme.roles.foreground };
     const translucency = try Translucency.pick(image, window, options);
     theme.background_alpha = translucency.alpha;
@@ -68,18 +68,18 @@ pub fn fromImage(look: Look, image: kosm.Image, options: ImageOptions) kosm.Imag
     result.theme = theme;
     const values = &result.values;
     values.blur = .{ .size = translucency.size, .passes = translucency.passes };
-    values.rounding = options.rounding.wholeAt(surface.softness);
+    values.rounding = options.rounding.wholeAt(traits.softness);
     // Tenths: a finer power looks no different and churns the config on every new picture.
-    values.rounding_power = @round(options.rounding_power.at(1 - surface.softness) * 10) / 10;
+    values.rounding_power = @round(options.rounding_power.at(1 - traits.softness) * 10) / 10;
     values.gaps = .{
-        .inner = options.gaps_inner.wholeAt(1 - surface.detail),
-        .outer = options.gaps_outer.wholeAt(1 - surface.detail),
+        .inner = options.gaps_inner.wholeAt(1 - traits.detail),
+        .outer = options.gaps_outer.wholeAt(1 - traits.detail),
     };
-    values.border_size = options.border_size.wholeAt(1 - surface.softness);
-    values.padding = options.padding.wholeAt(surface.softness);
+    values.border_size = options.border_size.wholeAt(1 - traits.softness);
+    values.padding = options.padding.wholeAt(traits.softness);
     values.shadow = .{
-        .range = options.shadow_range.wholeAt(surface.softness),
-        .render_power = options.shadow_render_power.wholeAt(1 - surface.softness),
+        .range = options.shadow_range.wholeAt(traits.softness),
+        .render_power = options.shadow_render_power.wholeAt(1 - traits.softness),
     };
     return result;
 }
@@ -123,7 +123,7 @@ const Translucency = struct {
         var blurred = window;
         var result = blurAt(options, strength);
         blurred.blur = blurSpread(result.size, result.passes);
-        result.alpha = try image.readableAlpha(blurred, options.measure);
+        result.alpha = try image.readableAlpha(blurred, options.colors.traits.reading);
         return result;
     }
 
@@ -151,7 +151,7 @@ fn testImage(comptime side: usize, lightness: f64, noisy: bool) kosm.Image {
 }
 
 test "a calm, soft image gives the least alpha, no blur, round corners and wide gaps" {
-    const look = try default.fromImage(testImage(32, 0.2, false), .{ .measure = .{ .screen_width = 32 } });
+    const look = try default.fromImage(testImage(32, 0.2, false), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 32 } } } });
     try testing.expectEqual(0.6, look.theme.background_alpha);
     try testing.expectEqual(0, look.values.blur.size.?);
     try testing.expectEqual(16, look.values.rounding.?);
@@ -163,7 +163,7 @@ test "a calm, soft image gives the least alpha, no blur, round corners and wide 
 }
 
 test "a busy image blurs as much as needed and narrows the gaps" {
-    const look = try default.fromImage(testImage(64, 0, true), .{ .measure = .{ .screen_width = 64, .text_size = 4 } });
+    const look = try default.fromImage(testImage(64, 0, true), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 64, .text_size = 4 } } } });
     try testing.expect(look.values.blur.size.? > 0);
     try testing.expectEqual(2, look.values.gaps.inner.?);
     try testing.expectEqual(4, look.values.gaps.outer.?);
@@ -172,7 +172,7 @@ test "a busy image blurs as much as needed and narrows the gaps" {
 
 test "a pinned range pins its value" {
     const look = try default.fromImage(testImage(64, 0, true), .{
-        .measure = .{ .screen_width = 64 },
+        .colors = .{ .traits = .{ .reading = .{ .screen_width = 64 } } },
         .alpha = .{ .min = 1, .max = 1 },
         .rounding = .{ .min = 7, .max = 7 },
     });

@@ -3,11 +3,9 @@
 
 const kosm = @import("kosm");
 
-/// How colors are taken from the image.
+/// How colors are taken from the image, and how it is measured (`traits`: the screen's width,
+/// the contrast text needs, what busy and soft are mixed from).
 colors: kosm.Image.Options = .{},
-/// How the image is measured as a backdrop: the screen's width, the contrast text needs, the
-/// thresholds of busy and soft.
-measure: kosm.Image.SurfaceOptions = .{},
 /// The theme's `background_alpha`: the lowest in range at which some blur in range keeps text
 /// readable, or the max if none does. Default: 0.6..1.
 alpha: Range = .{ .min = 0.6, .max = 1 },

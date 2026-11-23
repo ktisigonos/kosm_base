@@ -119,8 +119,7 @@ does not derive stay the look's; assign any value afterwards to override it.
 
 | Option | Derived value, default range |
 |---|---|
-| `colors` | how colors are taken (`kosm.Image.Options`) |
-| `measure` | how the picture is measured (`kosm.Image.SurfaceOptions`: screen width, contrast text needs, thresholds) |
+| `colors` | how colors are taken, and the picture measured in its `traits` (`kosm.Image.Options`) |
 | `alpha` | the theme's `background_alpha`: the lowest at which some blur in range keeps text readable; 0.6..1 |
 | `blur_size`, `blur_passes` | `blur`: the least that keeps text readable at that alpha; 0..10 and 2..4 |
 | `rounding`, `rounding_power` | rounder and nearer a circle for softer pictures; 4..16 and 2..4 |
