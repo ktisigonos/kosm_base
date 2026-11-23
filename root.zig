@@ -10,6 +10,8 @@ pub const Look = @import("Look.zig");
 pub const Fonts = @import("Fonts.zig");
 /// Settings several apps share, set once for every app having them.
 pub const Values = @import("Values.zig");
+/// How `Look.fromImage` takes a look from an image: its colors, and a range for each value it derives.
+pub const ImageOptions = @import("ImageOptions.zig");
 /// The chosen apps from a look.
 pub const from = Base.from;
 /// The chosen apps from a look, worn with another theme, which may be known only at run time.

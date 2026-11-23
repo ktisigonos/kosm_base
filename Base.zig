@@ -316,20 +316,20 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             ghostty.window_padding_x = .all(padding);
             ghostty.window_padding_y = .all(padding);
         }
-        if (values.blur) |blur| ghostty.background_blur = .{ .boolean = blur };
+        if (values.blur.size) |size| ghostty.background_blur = if (size == 0) .{ .boolean = false } else .{ .intensity = size };
     }
     if (base.foot) |*foot| {
         if (values.padding) |padding| foot.main.pad = .all(padding);
-        if (values.blur) |blur| {
-            foot.colors_dark.blur = blur;
-            foot.colors_light.blur = blur;
+        if (values.blur.size) |size| {
+            foot.colors_dark.blur = size > 0;
+            foot.colors_light.blur = size > 0;
         }
     }
     if (base.kitty) |*kitty| {
         if (values.padding) |padding| kitty.window.window_padding_width = .all(@floatFromInt(padding));
         if (values.editor) |editor| kitty.advanced.editor = editor;
         // Any positive value turns kitty's blur on; only macOS reads it as a radius.
-        if (values.blur) |blur| kitty.colors.background_blur = if (blur) 1 else 0;
+        if (values.blur.size) |size| kitty.colors.background_blur = size;
         if (active_border) |color| kitty.window.active_border_color = .{ .color = color };
         if (inactive_border) |color| kitty.window.inactive_border_color = color;
     }
@@ -354,7 +354,7 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
         if (values.rounding) |rounding| vicinae.launcher_window.rounding = rounding;
         if (values.border_size) |size| vicinae.launcher_window.client_side_decorations.border_width = size;
         if (values.shadow.range) |range| vicinae.launcher_window.client_side_decorations.shadow_size = range;
-        if (values.blur) |blur| vicinae.launcher_window.material = if (blur) .blur else .none;
+        if (values.blur.size) |size| vicinae.launcher_window.material = if (size > 0) .blur else .none;
         if (active_border) |color| vicinae.colors.core.border = color;
     }
     if (base.wlr_which_key) |*wlr_which_key| {
@@ -380,7 +380,11 @@ fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, active_border: ?kos
     if (values.border_size) |size| hyprland.general.border_size = size;
     if (active_border) |color| hyprland.general.col.active_border = .solid(color);
     if (inactive_border) |color| hyprland.general.col.inactive_border = .solid(color);
-    if (values.blur) |blur| hyprland.decoration.blur.enabled = blur;
+    if (values.blur.size) |size| {
+        hyprland.decoration.blur.enabled = size > 0;
+        hyprland.decoration.blur.size = size;
+    }
+    if (values.blur.passes) |passes| hyprland.decoration.blur.passes = passes;
     if (values.gaps.inner) |inner| hyprland.general.gaps_in = .all(inner);
     if (values.gaps.outer) |outer| hyprland.general.gaps_out = .all(outer);
     if (values.rounding) |rounding| hyprland.decoration.rounding = rounding;
@@ -663,7 +667,7 @@ test "each shared value reaches every app having that setting" {
             .icon_theme = "Papirus",
             .keyboard = .{ .layouts = &.{.{ .layout = "us" }} },
             .editor = "nvim",
-            .blur = false,
+            .blur = .{ .size = 0, .passes = 3 },
         };
         break :blk look;
     };
@@ -672,6 +676,8 @@ test "each shared value reaches every app having that setting" {
     const gray = kosm.hex("808080");
     try testing.expectEqual(kosm_hyprland.values.Gradient.solid(gray), hyprland.general.col.active_border.?);
     try testing.expect(!hyprland.decoration.blur.enabled.?);
+    try testing.expectEqual(0, hyprland.decoration.blur.size.?);
+    try testing.expectEqual(3, hyprland.decoration.blur.passes.?);
     try testing.expectEqual(gray, base.kitty.?.window.active_border_color.?.color);
     try testing.expectEqual(look.theme.variations.state.inactive.apply(gray), base.kitty.?.window.inactive_border_color.?);
     try testing.expectEqual(gray, base.wlr_which_key.?.border.?);
@@ -728,7 +734,7 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     const look: Look = comptime blk: {
         var look = test_look;
         look.values.borders.inactive = .{ .color = kosm.hex("282e22") };
-        look.values.blur = true;
+        look.values.blur = .{ .size = 6 };
         break :blk look;
     };
     const base = from(look, .all);
@@ -736,7 +742,11 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     try testing.expectEqual(kosm.hex("282e22"), base.kitty.?.window.inactive_border_color.?);
     try testing.expectEqual(look.theme.roles.accent, base.kitty.?.window.active_border_color.?.color);
     try testing.expectEqual(.blur, base.vicinae.?.launcher_window.material.?);
-    try testing.expectEqual(1, base.kitty.?.colors.background_blur.?);
+    try testing.expectEqual(6, base.kitty.?.colors.background_blur.?);
+    try testing.expectEqual(6, base.ghostty.?.background_blur.?.intensity);
+    try testing.expect(base.hyprland.?.decoration.blur.enabled.?);
+    try testing.expectEqual(6, base.hyprland.?.decoration.blur.size.?);
+    try testing.expectEqual(null, base.hyprland.?.decoration.blur.passes);
     try testing.expect(base.foot.?.colors_dark.blur.?);
 }
 

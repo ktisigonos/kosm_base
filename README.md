@@ -110,6 +110,25 @@ A look with no family hands out only the sizes, so each program keeps its own fo
 | `values` | the shared values below; default: none set |
 | `tweak` | `fn (base: *Base, look: Look) void`, run last to change single apps; null: none |
 
+## A look from an image
+
+`look.fromImage(image, options)` wears `look` in colors taken from `image` (a `kosm.Image` in the
+kosmos' `Params`) and derives its translucency and shared values from the picture, each within a
+range of `base.ImageOptions` (a range of `n..n` pins the value). Fonts, tweak and every value it
+does not derive stay the look's; assign any value afterwards to override it.
+
+| Option | Derived value, default range |
+|---|---|
+| `colors` | how colors are taken (`kosm.Image.Options`) |
+| `measure` | how the picture is measured (`kosm.Image.SurfaceOptions`: screen width, contrast text needs, thresholds) |
+| `alpha` | the theme's `background_alpha`: the lowest at which some blur in range keeps text readable; 0.6..1 |
+| `blur_size`, `blur_passes` | `blur`: the least that keeps text readable at that alpha; 0..10 and 2..4 |
+| `rounding`, `rounding_power` | rounder and nearer a circle for softer pictures; 4..16 and 2..4 |
+| `gaps_inner`, `gaps_outer` | smaller for busier pictures; 2..6 and 4..12 |
+| `border_size` | thinner for softer pictures; 1..3 |
+| `padding` | roomier for softer pictures; 6..14 |
+| `shadow_range`, `shadow_render_power` | wider and slower to fade for softer pictures; 4..20 and 2..4 |
+
 ## Shared values
 
 `from` sets each value of `look.values` in every app having that setting. A value left null is
@@ -125,7 +144,8 @@ not written, so each program's own default applies.
 | `gaps.inner`, `gaps.outer` | Hyprland's `general.gaps_in`, `general.gaps_out` |
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` and Blender's `shadow_range` (menu shadows, times its `shadow_scale`) |
-| `blur` | Hyprland's `decoration.blur.enabled`, Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur`, kitty's `background_blur` (1 or 0) and foot's `blur` in both color themes (drawn by compositors offering it, such as KDE; Hyprland blurs on its own); how translucent windows are is the theme's `background_alpha` |
+| `blur.size` | how far the blur reaches, 0 turning it off: Hyprland's `decoration.blur.size` and `enabled`, Ghostty's `background-blur` (intensity, or `false`), kitty's `background_blur`, foot's `blur` in both color themes and Vicinae's `material` (`blur` or `none`), the last three only on or off (the terminals' own blur is drawn by compositors offering it, such as KDE; Hyprland blurs on its own); how translucent windows are is the theme's `background_alpha` |
+| `blur.passes` | Hyprland's `decoration.blur.passes` |
 | `cursor.name`, `cursor.size` | GTK's cursor theme and size, Hyprland's `XCURSOR_*` and `HYPRCURSOR_*`; null name picks the `cursor` app's theme, and the size is also the one `cursor` tells Hyprland to reload at |
 | `icon_theme` | GTK's, KDE's, qt5ct's and qt6ct's, hyprtoolkit's and Vicinae's icon theme; null picks the `icons` app's theme |
 | `keyboard` | Hyprland's `input.kb_*` (a `kosm.Keyboard`) |

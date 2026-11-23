@@ -24,12 +24,9 @@ gaps: Gaps = .{},
 padding: ?u32 = null,
 /// Window shadows.
 shadow: Shadow = .{},
-/// Whether translucent windows blur what is behind them: Hyprland's `decoration.blur.enabled`,
-/// Vicinae's `material` (`blur` or `none`), Ghostty's `background-blur`, kitty's
-/// `background_blur` and foot's `blur` in both color themes (the terminals' own blur is drawn
-/// only by compositors that offer it, such as KDE's; Hyprland blurs them by itself).
-/// Translucency itself is the theme's `background_alpha`. null: not written.
-blur: ?bool = null,
+/// How translucent windows blur what is behind them. Translucency itself is the theme's
+/// `background_alpha`.
+blur: Blur = .{},
 /// The pointer.
 cursor: Cursor = .{},
 /// The icon theme's name: GTK, KDE, qt5ct and qt6ct, hyprtoolkit and Vicinae. null: the icons app's theme (`kosm`), or
@@ -78,6 +75,20 @@ pub const BorderColor = union(enum) {
             .color => |color| color,
         };
     }
+};
+
+/// How translucent windows blur what is behind them.
+pub const Blur = struct {
+    /// How far the blur reaches, in pixels; 0 turns blur off. Hyprland's
+    /// `decoration.blur.size` (and `enabled`), Ghostty's `background-blur` (its intensity, or
+    /// `false`), kitty's `background_blur`, foot's `blur` in both color themes and Vicinae's
+    /// `material` (`blur` or `none`), the last three only on or off. The terminals' own blur
+    /// is drawn only by compositors offering it, such as KDE's; Hyprland blurs them by itself.
+    /// null: not written.
+    size: ?u32 = null,
+    /// How many times the blur is applied, each spreading it further: Hyprland's
+    /// `decoration.blur.passes` (1 to 4 look good). null: not written.
+    passes: ?u32 = null,
 };
 
 /// Window shadows.
