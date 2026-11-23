@@ -136,7 +136,7 @@ between, `Mapping.rising` or `Mapping.falling`) averaged by weight, bent by `cur
 | `padding` | roomier for softer pictures; 6..14 |
 | `shadow_range`, `shadow_render_power` | wider and slower to fade for softer pictures; 4..20 and 2..4 |
 | `glow_range`, `glow_render_power` | wider and slower to fade the more the picture glows, 0 turning it off; 0..15 and 2..4 |
-| `glow_color` | `bool`: the glow takes the color of what glows in the picture; default true |
+| `glow_color` | `bool`: `glow.active` takes the color of what glows in the picture, `glow.inactive` following it; default true |
 
 ## Shared values
 
@@ -154,7 +154,8 @@ not written, so each program's own default applies.
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` and Blender's `shadow_range` (menu shadows, times its `shadow_scale`) |
 | `glow.range`, `glow.render_power` | Hyprland's `decoration.glow`, turned on above range 0 and off at 0 |
-| `glow.color` | Hyprland's `decoration.glow.color`; a role or a color, as `borders.active`; null: the active border's color |
+| `glow.active` | Hyprland's `decoration.glow.color`; a role or a color, as `borders.active`; null: the active border's color |
+| `glow.inactive` | Hyprland's `decoration.glow.color_inactive`; a role or a color; null: derived from `glow.active` through the theme's `state.inactive` when that is set, else the inactive border's color |
 | `blur.enabled` | whether windows blur at all, apart from how far (on, Hyprland's xray and blur effects keep working at size 0): Hyprland's `decoration.blur.enabled`, Ghostty's `background-blur` (`false` when off), kitty's `background_blur` (0 when off), foot's `blur` in both color themes and Vicinae's `material` (`blur` or `none`); the terminals' own blur is drawn by compositors offering it, such as KDE, while Hyprland blurs on its own |
 | `blur.size` | how far the blur reaches, turning nothing on or off: Hyprland's `decoration.blur.size`, Ghostty's `background-blur` intensity and kitty's `background_blur` (at least 1 while enabled); how translucent windows are is the theme's `background_alpha` |
 | `blur.passes` | Hyprland's `decoration.blur.passes` |

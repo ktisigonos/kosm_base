@@ -370,11 +370,16 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             profile.prefs.zen.theme.border_radius = @intCast(rounding);
         };
     }
-    const glow_color = if (values.glow.color) |color| color.resolve(theme) else active_border;
+    const set_active_glow = if (values.glow.active) |color| color.resolve(theme) else null;
+    const inactive_glow = if (values.glow.inactive) |color| color.resolve(theme) else if (set_active_glow) |active|
+        theme.variations.state.inactive.apply(active)
+    else
+        inactive_border;
     if (base.hyprland) |*hyprland| setHyprland(hyprland, values, .{
         .active_border = active_border,
         .inactive_border = set_inactive_border,
-        .glow = glow_color,
+        .active_glow = set_active_glow orelse active_border,
+        .inactive_glow = inactive_glow,
     }, cursor_theme);
 }
 
@@ -399,7 +404,8 @@ const HyprlandColors = struct {
     active_border: ?kosm.Color,
     /// Only the one the look sets, as Hyprland derives its own.
     inactive_border: ?kosm.Color,
-    glow: ?kosm.Color,
+    active_glow: ?kosm.Color,
+    inactive_glow: ?kosm.Color,
 };
 
 /// Hyprland's shared values.
@@ -412,7 +418,8 @@ fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, colors: HyprlandCol
         hyprland.decoration.glow.range = range;
     }
     if (values.glow.render_power) |power| hyprland.decoration.glow.render_power = power;
-    if (colors.glow) |color| hyprland.decoration.glow.color = .solid(color);
+    if (colors.active_glow) |color| hyprland.decoration.glow.color = .solid(color);
+    if (colors.inactive_glow) |color| hyprland.decoration.glow.color_inactive = .solid(color);
     if (values.blur.enabled) |enabled| hyprland.decoration.blur.enabled = enabled;
     if (values.blur.size) |size| hyprland.decoration.blur.size = size;
     if (values.blur.passes) |passes| hyprland.decoration.blur.passes = passes;
@@ -807,20 +814,28 @@ test "blur on at size 0 stays on, and a size alone turns nothing on or off" {
     try testing.expectEqual(null, sized_base.vicinae.?.launcher_window.material);
 }
 
-test "a glow reaches Hyprland, on above range 0, in the active border's color unless it has its own" {
+test "a glow reaches Hyprland, on above range 0, in the borders' colors unless it has its own" {
+    const Gradient = kosm_hyprland.values.Gradient;
     var look = test_look;
-    look.values.borders.active = .{ .color = kosm.hex("808080") };
+    look.values.borders = .{ .active = .{ .color = kosm.hex("808080") }, .inactive = .{ .color = kosm.hex("202020") } };
     look.values.glow = .{ .range = 8, .render_power = 2 };
     const glowing = from(look, .all).hyprland.?.decoration.glow;
     try testing.expect(glowing.enabled.?);
     try testing.expectEqual(8, glowing.range.?);
     try testing.expectEqual(2, glowing.render_power.?);
-    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("808080")), glowing.color.?);
+    try testing.expectEqual(Gradient.solid(kosm.hex("808080")), glowing.color.?);
+    try testing.expectEqual(Gradient.solid(kosm.hex("202020")), glowing.color_inactive.?);
 
-    look.values.glow = .{ .range = 0, .color = .{ .role = .warning } };
+    look.values.glow = .{ .range = 0, .active = .{ .role = .warning } };
     const off = from(look, .all);
+    const warning = off.theme.roles.warning;
     try testing.expect(!off.hyprland.?.decoration.glow.enabled.?);
-    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(off.theme.roles.warning), off.hyprland.?.decoration.glow.color.?);
+    try testing.expectEqual(Gradient.solid(warning), off.hyprland.?.decoration.glow.color.?);
+    try testing.expectEqual(Gradient.solid(off.theme.variations.state.inactive.apply(warning)), off.hyprland.?.decoration.glow.color_inactive.?);
+
+    look.values.glow.inactive = .{ .role = .info };
+    const own = from(look, .all);
+    try testing.expectEqual(Gradient.solid(own.theme.roles.info), own.hyprland.?.decoration.glow.color_inactive.?);
 }
 
 test "values left null leave every app's setting unwritten" {

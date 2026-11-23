@@ -75,7 +75,7 @@ pub fn fromTraits(look: Look, theme: kosm.Theme, mapping: Mapping) Look {
     values.glow.range = mapping.glow_range.wholeAt(traits);
     values.glow.render_power = mapping.glow_render_power.wholeAt(traits);
     if (mapping.glow_color) if (traits.glow_color) |color| {
-        values.glow.color = .{ .color = color };
+        values.glow.active = .{ .color = color };
     };
     return result;
 }
@@ -162,12 +162,12 @@ test "a picture that glows gets a glow in its glow's color, and one that does no
     const neon = kosm.hex("ff00cc");
     const glowing = wornWith(.{ .glow = 1, .glow_color = neon }, .{});
     try testing.expectEqual(15, glowing.values.glow.range.?);
-    try testing.expectEqual(neon, glowing.values.glow.color.?.color);
+    try testing.expectEqual(neon, glowing.values.glow.active.?.color);
     const dull = wornWith(.{ .glow = 0 }, .{});
     try testing.expectEqual(0, dull.values.glow.range.?);
-    try testing.expectEqual(null, dull.values.glow.color);
+    try testing.expectEqual(null, dull.values.glow.active);
     const own_color = wornWith(.{ .glow = 1, .glow_color = neon }, .{ .glow_color = false });
-    try testing.expectEqual(null, own_color.values.glow.color);
+    try testing.expectEqual(null, own_color.values.glow.active);
 }
 
 test "alpha follows its rule while text reads, with the least blur reading at it" {

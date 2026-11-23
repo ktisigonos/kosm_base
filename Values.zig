@@ -116,9 +116,13 @@ pub const Glow = struct {
     /// How fast the glow fades, 1 to 4: Hyprland's `decoration.glow.render_power`. null: not
     /// written.
     render_power: ?u32 = null,
-    /// The glow's color: Hyprland's `decoration.glow.color`. A role follows the theme the look
-    /// is worn with. null: the active border's color.
-    color: ?BorderColor = null,
+    /// The focused window's glow: Hyprland's `decoration.glow.color`. A role follows the theme
+    /// the look is worn with. null: the active border's color.
+    active: ?BorderColor = null,
+    /// Unfocused windows' glow: Hyprland's `decoration.glow.color_inactive`. null: derived
+    /// from `active` through the theme's `state.inactive` when that is set, else the inactive
+    /// border's color, so glows and borders match.
+    inactive: ?BorderColor = null,
 };
 
 /// The pointer.

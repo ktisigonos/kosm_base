@@ -38,7 +38,8 @@ glow_range: Rule = .{ .range = .{ .min = 0, .max = 15 }, .from = .{ .glow = risi
 /// `glow.render_power` (1..4, how fast the glow fades), slower the more the picture glows.
 /// Default: 2..4.
 glow_render_power: Rule = .{ .range = .{ .min = 2, .max = 4 }, .from = .{ .glow = falling } },
-/// Whether `glow.color` becomes the color of what glows in the picture. Default: true.
+/// Whether `glow.active` becomes the color of what glows in the picture, the unfocused glow
+/// following it. Default: true.
 glow_color: bool = true,
 
 /// A trait counting toward its value as it grows.
