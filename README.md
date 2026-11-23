@@ -143,6 +143,8 @@ not written, so each program's own default applies.
 | `gaps.inner`, `gaps.outer` | Hyprland's `general.gaps_in`, `general.gaps_out` |
 | `padding` | Ghostty's `window-padding-x` and `-y`, kitty's `window_padding_width`, foot's `pad` |
 | `shadow.range`, `shadow.render_power` | Hyprland's `decoration.shadow`; the range also Vicinae's `shadow_size` and Blender's `shadow_range` (menu shadows, times its `shadow_scale`) |
+| `glow.range`, `glow.render_power` | Hyprland's `decoration.glow`, turned on above range 0 and off at 0 |
+| `glow.color` | Hyprland's `decoration.glow.color`; a role or a color, as `borders.active`; null: the active border's color |
 | `blur.enabled` | whether windows blur at all, apart from how far (on, Hyprland's xray and blur effects keep working at size 0): Hyprland's `decoration.blur.enabled`, Ghostty's `background-blur` (`false` when off), kitty's `background_blur` (0 when off), foot's `blur` in both color themes and Vicinae's `material` (`blur` or `none`); the terminals' own blur is drawn by compositors offering it, such as KDE, while Hyprland blurs on its own |
 | `blur.size` | how far the blur reaches, turning nothing on or off: Hyprland's `decoration.blur.size`, Ghostty's `background-blur` intensity and kitty's `background_blur` (at least 1 while enabled); how translucent windows are is the theme's `background_alpha` |
 | `blur.passes` | Hyprland's `decoration.blur.passes` |

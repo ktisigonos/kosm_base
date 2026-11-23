@@ -24,6 +24,8 @@ gaps: Gaps = .{},
 padding: ?u32 = null,
 /// Window shadows.
 shadow: Shadow = .{},
+/// A glow inside windows.
+glow: Glow = .{},
 /// How translucent windows blur what is behind them. Translucency itself is the theme's
 /// `background_alpha`.
 blur: Blur = .{},
@@ -104,6 +106,19 @@ pub const Shadow = struct {
     /// How fast the shadow fades, 1 to 4: Hyprland's `decoration.shadow.render_power`.
     /// null: not written.
     render_power: ?u32 = null,
+};
+
+/// A glow inside windows.
+pub const Glow = struct {
+    /// How far the glow reaches into the window, in pixels: Hyprland's
+    /// `decoration.glow.range`, its glow turned on above 0 and off at 0. null: not written.
+    range: ?u32 = null,
+    /// How fast the glow fades, 1 to 4: Hyprland's `decoration.glow.render_power`. null: not
+    /// written.
+    render_power: ?u32 = null,
+    /// The glow's color: Hyprland's `decoration.glow.color`. A role follows the theme the look
+    /// is worn with. null: the active border's color.
+    color: ?BorderColor = null,
 };
 
 /// The pointer.

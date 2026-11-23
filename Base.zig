@@ -370,7 +370,12 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             profile.prefs.zen.theme.border_radius = @intCast(rounding);
         };
     }
-    if (base.hyprland) |*hyprland| setHyprland(hyprland, values, active_border, set_inactive_border, cursor_theme);
+    const glow_color = if (values.glow.color) |color| color.resolve(theme) else active_border;
+    if (base.hyprland) |*hyprland| setHyprland(hyprland, values, .{
+        .active_border = active_border,
+        .inactive_border = set_inactive_border,
+        .glow = glow_color,
+    }, cursor_theme);
 }
 
 /// Ghostty's `background-blur`: `false` when blur is off, else its size as the intensity, or
@@ -389,12 +394,25 @@ fn kittyBlur(blur: Values.Blur) ?u32 {
     return blur.size;
 }
 
-/// Hyprland's shared values; its inactive border is set only when the look sets one, as Hyprland
-/// derives its own.
-fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, active_border: ?kosm.Color, inactive_border: ?kosm.Color, cursor_theme: ?[]const u8) void {
+/// The colors Hyprland gets from the shared values, each null when the look sets none.
+const HyprlandColors = struct {
+    active_border: ?kosm.Color,
+    /// Only the one the look sets, as Hyprland derives its own.
+    inactive_border: ?kosm.Color,
+    glow: ?kosm.Color,
+};
+
+/// Hyprland's shared values.
+fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, colors: HyprlandColors, cursor_theme: ?[]const u8) void {
     if (values.border_size) |size| hyprland.general.border_size = size;
-    if (active_border) |color| hyprland.general.col.active_border = .solid(color);
-    if (inactive_border) |color| hyprland.general.col.inactive_border = .solid(color);
+    if (colors.active_border) |color| hyprland.general.col.active_border = .solid(color);
+    if (colors.inactive_border) |color| hyprland.general.col.inactive_border = .solid(color);
+    if (values.glow.range) |range| {
+        hyprland.decoration.glow.enabled = range > 0;
+        hyprland.decoration.glow.range = range;
+    }
+    if (values.glow.render_power) |power| hyprland.decoration.glow.render_power = power;
+    if (colors.glow) |color| hyprland.decoration.glow.color = .solid(color);
     if (values.blur.enabled) |enabled| hyprland.decoration.blur.enabled = enabled;
     if (values.blur.size) |size| hyprland.decoration.blur.size = size;
     if (values.blur.passes) |passes| hyprland.decoration.blur.passes = passes;
@@ -787,6 +805,22 @@ test "blur on at size 0 stays on, and a size alone turns nothing on or off" {
     try testing.expectEqual(0, sized_base.hyprland.?.decoration.blur.size.?);
     try testing.expectEqual(null, sized_base.foot.?.colors_dark.blur);
     try testing.expectEqual(null, sized_base.vicinae.?.launcher_window.material);
+}
+
+test "a glow reaches Hyprland, on above range 0, in the active border's color unless it has its own" {
+    var look = test_look;
+    look.values.borders.active = .{ .color = kosm.hex("808080") };
+    look.values.glow = .{ .range = 8, .render_power = 2 };
+    const glowing = from(look, .all).hyprland.?.decoration.glow;
+    try testing.expect(glowing.enabled.?);
+    try testing.expectEqual(8, glowing.range.?);
+    try testing.expectEqual(2, glowing.render_power.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("808080")), glowing.color.?);
+
+    look.values.glow = .{ .range = 0, .color = .{ .role = .warning } };
+    const off = from(look, .all);
+    try testing.expect(!off.hyprland.?.decoration.glow.enabled.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(off.theme.roles.warning), off.hyprland.?.decoration.glow.color.?);
 }
 
 test "values left null leave every app's setting unwritten" {
