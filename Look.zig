@@ -67,7 +67,8 @@ pub fn fromImage(look: Look, image: kosm.Image, options: ImageOptions) kosm.Imag
     var result = look;
     result.theme = theme;
     const values = &result.values;
-    values.blur = .{ .size = translucency.size, .passes = translucency.passes };
+    values.blur.size = translucency.size;
+    values.blur.passes = translucency.passes;
     values.rounding = options.rounding.wholeAt(traits.softness);
     // Tenths: a finer power looks no different and churns the config on every new picture.
     values.rounding_power = @round(options.rounding_power.at(1 - traits.softness) * 10) / 10;
@@ -183,4 +184,12 @@ test "a pinned range pins its value" {
 
 test "an image kosm did not load gives no look" {
     try testing.expectError(error.ImageNotLoaded, default.fromImage(.{ .path = "/a.png" }, .{}));
+}
+
+test "a look from an image keeps the look's blur on, even when it picks no blur" {
+    var look = default;
+    look.values.blur.enabled = true;
+    const result = try look.fromImage(testImage(32, 0.2, false), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 32 } } } });
+    try testing.expectEqual(true, result.values.blur.enabled);
+    try testing.expectEqual(0, result.values.blur.size);
 }
