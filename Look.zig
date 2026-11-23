@@ -69,7 +69,8 @@ pub fn fromImage(look: Look, image: kosm.Image, options: ImageOptions) kosm.Imag
     const values = &result.values;
     values.blur = .{ .size = translucency.size, .passes = translucency.passes };
     values.rounding = options.rounding.wholeAt(surface.softness);
-    values.rounding_power = options.rounding_power.at(1 - surface.softness);
+    // Tenths: a finer power looks no different and churns the config on every new picture.
+    values.rounding_power = @round(options.rounding_power.at(1 - surface.softness) * 10) / 10;
     values.gaps = .{
         .inner = options.gaps_inner.wholeAt(1 - surface.detail),
         .outer = options.gaps_outer.wholeAt(1 - surface.detail),
@@ -169,7 +170,7 @@ test "a busy image blurs as much as needed and narrows the gaps" {
     try testing.expect(look.theme.background_alpha >= 0.6 and look.theme.background_alpha <= 1);
 }
 
-test "a pinned range pins its value whatever the image" {
+test "a pinned range pins its value" {
     const look = try default.fromImage(testImage(64, 0, true), .{
         .measure = .{ .screen_width = 64 },
         .alpha = .{ .min = 1, .max = 1 },
