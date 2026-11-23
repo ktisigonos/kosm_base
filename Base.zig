@@ -938,6 +938,19 @@ test "borders set to roles follow the theme the look is worn with" {
     try testing.expectEqual(kosm_hyprland.values.Gradient.solid(kosm.hex("ffff00")), base.hyprland.?.general.col.inactive_border.?);
 }
 
+test "an inactive role is the role dimmed, for the unfocused borders and glow alike" {
+    var look = test_look;
+    look.values.borders = .{ .active = .{ .role = .accent }, .inactive = .{ .inactive_role = .accent } };
+    look.values.glow.range = 10;
+    const base = from(look, .{ .only = &.{ .kitty, .hyprland } });
+    const dimmed = base.theme.variations.state.inactive.apply(base.theme.roles.accent);
+    try testing.expect(dimmed.lightness < base.theme.roles.accent.lightness);
+    try testing.expectEqual(dimmed, base.kitty.?.window.inactive_border_color.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(dimmed), base.hyprland.?.general.col.inactive_border.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(dimmed), base.hyprland.?.decoration.glow.color_inactive.?);
+    try testing.expectEqual(kosm_hyprland.values.Gradient.solid(base.theme.roles.accent), base.hyprland.?.decoration.glow.color.?);
+}
+
 /// An app of a user's own, outside the official base.
 const TestApp = struct {
     accent: kosm.Color,

@@ -63,10 +63,14 @@ pub const Borders = struct {
 };
 
 /// A border's color: a role of the theme the look is worn with, so it follows that theme (one
-/// taken from an image too), or a fixed color.
+/// taken from an image too), as it is or dimmed for unfocused windows, or a fixed color.
 pub const BorderColor = union(enum) {
     /// This role's color in the worn theme: `.{ .role = .accent }`.
     role: kosm.Theme.Roles.Name,
+    /// This role's color in the worn theme through its `state.inactive`, dimmer as unfocused
+    /// windows are, so they stand apart even when the role equals the focused one's:
+    /// `.{ .inactive_role = .secondary }`.
+    inactive_role: kosm.Theme.Roles.Name,
     /// This color, whatever the theme: `.{ .color = kosm.hex("2e8799") }`.
     color: kosm.Color,
 
@@ -74,6 +78,7 @@ pub const BorderColor = union(enum) {
     pub fn resolve(border_color: BorderColor, theme: kosm.Theme) kosm.Color {
         return switch (border_color) {
             .role => |name| theme.roles.get(name),
+            .inactive_role => |name| theme.variations.state.inactive.apply(theme.roles.get(name)),
             .color => |color| color,
         };
     }

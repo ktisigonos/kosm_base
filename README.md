@@ -136,7 +136,7 @@ between, `Mapping.rising` or `Mapping.falling`) averaged by weight, bent by `cur
 | `padding` | roomier for softer pictures; 6..14 |
 | `shadow_range`, `shadow_render_power` | wider and slower to fade for softer pictures; 4..20 and 2..4 |
 | `glow_range`, `glow_render_power` | wider and slower to fade the more the picture glows, 0 turning it off; 0..15 and 2..4 |
-| `glow_color` | `bool`: `glow.active` takes the color of what glows in the picture, `glow.inactive` following it; default true |
+| `glow_color` | `bool`: `glow.active` takes the color of what glows in the picture, `glow.inactive` following it; default false, so glows match the borders |
 
 ## Shared values
 
@@ -146,7 +146,7 @@ not written, so each program's own default applies.
 | Field | Apps |
 |---|---|
 | `border_size` | Hyprland's `general.border_size`, wlr-which-key's `border_width`, Vicinae's `border_width`, dunst's `frame_width`, Blender's `border_size` (the outline around selected objects, 1 to 5 px) |
-| `borders.active` | Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's `border`, Vicinae's `core.border`, dunst's `frame_color` (critical keeps the error role), Zen's glance outline; `.{ .role = .accent }` follows the worn theme, `.{ .color = ... }` is fixed; null: each app's accent |
+| `borders.active` | Hyprland's `general.col.active_border`, kitty's `active_border_color`, wlr-which-key's `border`, Vicinae's `core.border`, dunst's `frame_color` (critical keeps the error role), Zen's glance outline; `.{ .role = .accent }` follows the worn theme, `.{ .inactive_role = .secondary }` follows it dimmed through its `state.inactive`, `.{ .color = ... }` is fixed; null: each app's accent |
 | `borders.inactive` | Hyprland's `general.col.inactive_border`, kitty's `inactive_border_color`; a role or a color, as `borders.active`; null: derived from `borders.active` through the theme's `state.inactive` |
 | `rounding` | Hyprland's `decoration.rounding`, hyprtoolkit's `rounding_large` (`rounding_small` half), Zen's `zen.theme.border-radius`, Firefox's forced page corners (off until `firefox.enabled.corners` or the toolbar button turns them on), wlr-which-key's `corner_r`, Vicinae's `rounding`, dunst's `corner_radius`, Blender's `rounding` (its widgets' and panels' roundness), Commet's `caulk_border_radius`, Equibop's `rounding` |
 | `rounding_power` | Hyprland's `decoration.rounding_power` |

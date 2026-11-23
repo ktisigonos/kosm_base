@@ -39,8 +39,8 @@ glow_range: Rule = .{ .range = .{ .min = 0, .max = 15 }, .from = .{ .glow = risi
 /// Default: 2..4.
 glow_render_power: Rule = .{ .range = .{ .min = 2, .max = 4 }, .from = .{ .glow = falling } },
 /// Whether `glow.active` becomes the color of what glows in the picture, the unfocused glow
-/// following it. Default: true.
-glow_color: bool = true,
+/// following it. Default: false, so glows match the borders.
+glow_color: bool = false,
 
 /// A trait counting toward its value as it grows.
 pub const rising: Contributor = .{ .weight = 1, .low = 0, .high = 1 };

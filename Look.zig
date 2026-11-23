@@ -158,15 +158,15 @@ test "a crisp picture gets square corners, and a soft blurry one round corners a
     try testing.expectEqual(13, soft.fonts.size);
 }
 
-test "a picture that glows gets a glow in its glow's color, and one that does not gets none" {
+test "a picture that glows gets a glow, in its glow's color only when asked, and one that does not gets none" {
     const neon = kosm.hex("ff00cc");
-    const glowing = wornWith(.{ .glow = 1, .glow_color = neon }, .{});
+    const glowing = wornWith(.{ .glow = 1, .glow_color = neon }, .{ .glow_color = true });
     try testing.expectEqual(15, glowing.values.glow.range.?);
     try testing.expectEqual(neon, glowing.values.glow.active.?.color);
     const dull = wornWith(.{ .glow = 0 }, .{});
     try testing.expectEqual(0, dull.values.glow.range.?);
     try testing.expectEqual(null, dull.values.glow.active);
-    const own_color = wornWith(.{ .glow = 1, .glow_color = neon }, .{ .glow_color = false });
+    const own_color = wornWith(.{ .glow = 1, .glow_color = neon }, .{});
     try testing.expectEqual(null, own_color.values.glow.active);
 }
 
