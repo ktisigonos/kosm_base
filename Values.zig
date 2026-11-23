@@ -79,12 +79,16 @@ pub const BorderColor = union(enum) {
 
 /// How translucent windows blur what is behind them.
 pub const Blur = struct {
-    /// How far the blur reaches, in pixels; 0 turns blur off. Hyprland's
-    /// `decoration.blur.size` (and `enabled`), Ghostty's `background-blur` (its intensity, or
-    /// `false`), kitty's `background_blur`, foot's `blur` in both color themes and Vicinae's
-    /// `material` (`blur` or `none`), the last three only on or off. The terminals' own blur
-    /// is drawn only by compositors offering it, such as KDE's; Hyprland blurs them by itself.
-    /// null: not written.
+    /// Whether windows blur at all, apart from how far: Hyprland's `decoration.blur.enabled`
+    /// (on, its xray and blur effects keep working even at size 0), Ghostty's
+    /// `background-blur` (`false` when off), kitty's `background_blur` (0 when off), foot's
+    /// `blur` in both color themes and Vicinae's `material` (`blur` or `none`). The terminals'
+    /// own blur is drawn only by compositors offering it, such as KDE's; Hyprland blurs them by
+    /// itself. null: not written.
+    enabled: ?bool = null,
+    /// How far the blur reaches, in pixels: Hyprland's `decoration.blur.size`, Ghostty's
+    /// `background-blur` intensity and kitty's `background_blur` (on Linux only on or off, so
+    /// at least 1 while enabled). Turns nothing on or off. null: not written.
     size: ?u32 = null,
     /// How many times the blur is applied, each spreading it further: Hyprland's
     /// `decoration.blur.passes` (1 to 4 look good). null: not written.

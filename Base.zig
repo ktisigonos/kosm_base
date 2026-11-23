@@ -316,20 +316,19 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
             ghostty.window_padding_x = .all(padding);
             ghostty.window_padding_y = .all(padding);
         }
-        if (values.blur.size) |size| ghostty.background_blur = if (size == 0) .{ .boolean = false } else .{ .intensity = size };
+        if (ghosttyBlur(values.blur)) |blur| ghostty.background_blur = blur;
     }
     if (base.foot) |*foot| {
         if (values.padding) |padding| foot.main.pad = .all(padding);
-        if (values.blur.size) |size| {
-            foot.colors_dark.blur = size > 0;
-            foot.colors_light.blur = size > 0;
+        if (values.blur.enabled) |enabled| {
+            foot.colors_dark.blur = enabled;
+            foot.colors_light.blur = enabled;
         }
     }
     if (base.kitty) |*kitty| {
         if (values.padding) |padding| kitty.window.window_padding_width = .all(@floatFromInt(padding));
         if (values.editor) |editor| kitty.advanced.editor = editor;
-        // Any positive value turns kitty's blur on; only macOS reads it as a radius.
-        if (values.blur.size) |size| kitty.colors.background_blur = size;
+        if (kittyBlur(values.blur)) |blur| kitty.colors.background_blur = blur;
         if (active_border) |color| kitty.window.active_border_color = .{ .color = color };
         if (inactive_border) |color| kitty.window.inactive_border_color = color;
     }
@@ -354,7 +353,7 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
         if (values.rounding) |rounding| vicinae.launcher_window.rounding = rounding;
         if (values.border_size) |size| vicinae.launcher_window.client_side_decorations.border_width = size;
         if (values.shadow.range) |range| vicinae.launcher_window.client_side_decorations.shadow_size = range;
-        if (values.blur.size) |size| vicinae.launcher_window.material = if (size > 0) .blur else .none;
+        if (values.blur.enabled) |enabled| vicinae.launcher_window.material = if (enabled) .blur else .none;
         if (active_border) |color| vicinae.colors.core.border = color;
     }
     if (base.wlr_which_key) |*wlr_which_key| {
@@ -374,16 +373,30 @@ fn setValues(base: *Base, values: Values, theme: kosm.Theme) void {
     if (base.hyprland) |*hyprland| setHyprland(hyprland, values, active_border, set_inactive_border, cursor_theme);
 }
 
+/// Ghostty's `background-blur`: `false` when blur is off, else its size as the intensity, or
+/// `true` when it is on with no size.
+fn ghosttyBlur(blur: Values.Blur) ?kosm_ghostty.values.BackgroundBlur {
+    if (blur.enabled == false) return .{ .boolean = false };
+    if (blur.size) |size| return if (size == 0 and blur.enabled == true) .{ .boolean = true } else .{ .intensity = size };
+    if (blur.enabled == true) return .{ .boolean = true };
+    return null;
+}
+
+/// kitty's `background_blur`: any positive value turns its blur on, and only macOS reads it as a
+/// radius, so 0 when blur is off and at least 1 while it is on.
+fn kittyBlur(blur: Values.Blur) ?u32 {
+    if (blur.enabled) |enabled| return if (enabled) @max(1, blur.size orelse 1) else 0;
+    return blur.size;
+}
+
 /// Hyprland's shared values; its inactive border is set only when the look sets one, as Hyprland
 /// derives its own.
 fn setHyprland(hyprland: *kosm_hyprland.App, values: Values, active_border: ?kosm.Color, inactive_border: ?kosm.Color, cursor_theme: ?[]const u8) void {
     if (values.border_size) |size| hyprland.general.border_size = size;
     if (active_border) |color| hyprland.general.col.active_border = .solid(color);
     if (inactive_border) |color| hyprland.general.col.inactive_border = .solid(color);
-    if (values.blur.size) |size| {
-        hyprland.decoration.blur.enabled = size > 0;
-        hyprland.decoration.blur.size = size;
-    }
+    if (values.blur.enabled) |enabled| hyprland.decoration.blur.enabled = enabled;
+    if (values.blur.size) |size| hyprland.decoration.blur.size = size;
     if (values.blur.passes) |passes| hyprland.decoration.blur.passes = passes;
     if (values.gaps.inner) |inner| hyprland.general.gaps_in = .all(inner);
     if (values.gaps.outer) |outer| hyprland.general.gaps_out = .all(outer);
@@ -667,7 +680,7 @@ test "each shared value reaches every app having that setting" {
             .icon_theme = "Papirus",
             .keyboard = .{ .layouts = &.{.{ .layout = "us" }} },
             .editor = "nvim",
-            .blur = .{ .size = 0, .passes = 3 },
+            .blur = .{ .enabled = false, .size = 0, .passes = 3 },
         };
         break :blk look;
     };
@@ -734,7 +747,7 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     const look: Look = comptime blk: {
         var look = test_look;
         look.values.borders.inactive = .{ .color = kosm.hex("282e22") };
-        look.values.blur = .{ .size = 6 };
+        look.values.blur = .{ .enabled = true, .size = 6 };
         break :blk look;
     };
     const base = from(look, .all);
@@ -748,6 +761,32 @@ test "an inactive border set goes to Hyprland and kitty, and blur on picks Vicin
     try testing.expectEqual(6, base.hyprland.?.decoration.blur.size.?);
     try testing.expectEqual(null, base.hyprland.?.decoration.blur.passes);
     try testing.expect(base.foot.?.colors_dark.blur.?);
+}
+
+test "blur on at size 0 stays on, and a size alone turns nothing on or off" {
+    const on: Look = comptime blk: {
+        var look = test_look;
+        look.values.blur = .{ .enabled = true, .size = 0 };
+        break :blk look;
+    };
+    const base = from(on, .all);
+    try testing.expect(base.hyprland.?.decoration.blur.enabled.?);
+    try testing.expectEqual(0, base.hyprland.?.decoration.blur.size.?);
+    try testing.expect(base.ghostty.?.background_blur.?.boolean);
+    try testing.expectEqual(1, base.kitty.?.colors.background_blur.?);
+    try testing.expect(base.foot.?.colors_dark.blur.?);
+    try testing.expectEqual(.blur, base.vicinae.?.launcher_window.material.?);
+
+    const sized: Look = comptime blk: {
+        var look = test_look;
+        look.values.blur = .{ .size = 0 };
+        break :blk look;
+    };
+    const sized_base = from(sized, .all);
+    try testing.expectEqual(null, sized_base.hyprland.?.decoration.blur.enabled);
+    try testing.expectEqual(0, sized_base.hyprland.?.decoration.blur.size.?);
+    try testing.expectEqual(null, sized_base.foot.?.colors_dark.blur);
+    try testing.expectEqual(null, sized_base.vicinae.?.launcher_window.material);
 }
 
 test "values left null leave every app's setting unwritten" {
