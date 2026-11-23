@@ -7,7 +7,7 @@ const kosm = @import("kosm");
 const Base = @import("Base.zig");
 const Fonts = @import("Fonts.zig");
 const Values = @import("Values.zig");
-const ImageOptions = @import("ImageOptions.zig");
+const Mapping = @import("Mapping.zig");
 
 /// The colors every app is built from.
 theme: kosm.Theme,
@@ -52,58 +52,58 @@ fn blurSpread(size: u32, passes: u32) f64 {
 /// Halvings in the search for the least blur that reads; 6 leave under 2% of the range.
 const blur_search_steps = 6;
 
-/// `look` worn in colors taken from `image`, with its shared values derived from it, each
-/// within its range in `options`: how translucent and blurred windows are from how readable
-/// text stays over the image, the gaps from how busy it is, rounding, borders, padding and
-/// shadows from how soft it is. The look's fonts, tweak and every other value stay; assign any
-/// value afterwards to override it.
-pub fn fromImage(look: Look, image: kosm.Image, options: ImageOptions) kosm.Image.Error!Look {
-    var theme: kosm.Theme = .from(try image.themeInput(options.colors));
-    const traits = try image.traits(options.colors);
-    const window: kosm.Image.Window = .{ .background = theme.roles.background, .foreground = theme.roles.foreground };
-    const translucency = try Translucency.pick(image, window, options);
-    theme.background_alpha = translucency.alpha;
-
+/// `look` worn in `theme`, with its shared values derived from the theme's traits as
+/// `mapping` says: translucency and blur from readability, shapes, gaps and glow from what the
+/// source is like. A theme without traits (made by hand) is worn with the look's values as
+/// they are. Fonts, tweak and every value not derived stay; assign any afterwards to override.
+pub fn fromTraits(look: Look, theme: kosm.Theme, mapping: Mapping) Look {
     var result = look;
     result.theme = theme;
+    const traits = theme.traits orelse return result;
+    const translucency = Translucency.pick(traits, mapping);
+    result.theme.background_alpha = translucency.alpha;
     const values = &result.values;
     values.blur.size = translucency.size;
     values.blur.passes = translucency.passes;
-    values.rounding = options.rounding.wholeAt(traits.softness);
+    values.rounding = mapping.rounding.wholeAt(traits);
     // Tenths: a finer power looks no different and churns the config on every new picture.
-    values.rounding_power = @round(options.rounding_power.at(1 - traits.softness) * 10) / 10;
-    values.gaps = .{
-        .inner = options.gaps_inner.wholeAt(1 - traits.detail),
-        .outer = options.gaps_outer.wholeAt(1 - traits.detail),
-    };
-    values.border_size = options.border_size.wholeAt(1 - traits.softness);
-    values.padding = options.padding.wholeAt(traits.softness);
-    values.shadow = .{
-        .range = options.shadow_range.wholeAt(traits.softness),
-        .render_power = options.shadow_render_power.wholeAt(1 - traits.softness),
+    values.rounding_power = @round(mapping.rounding_power.at(traits) * 10) / 10;
+    values.gaps = .{ .inner = mapping.gaps_inner.wholeAt(traits), .outer = mapping.gaps_outer.wholeAt(traits) };
+    values.border_size = mapping.border_size.wholeAt(traits);
+    values.padding = mapping.padding.wholeAt(traits);
+    values.shadow = .{ .range = mapping.shadow_range.wholeAt(traits), .render_power = mapping.shadow_render_power.wholeAt(traits) };
+    values.glow.range = mapping.glow_range.wholeAt(traits);
+    values.glow.render_power = mapping.glow_render_power.wholeAt(traits);
+    if (mapping.glow_color) if (traits.glow_color) |color| {
+        values.glow.color = .{ .color = color };
     };
     return result;
 }
 
-/// The background alpha and blur `fromImage` picks.
+/// `fromTraits` with the theme taken from `image` as `options` says, carrying its traits.
+pub fn fromImage(look: Look, image: kosm.Image, options: kosm.Image.Options, mapping: Mapping) kosm.Image.Error!Look {
+    return look.fromTraits(.from(try image.themeInput(options)), mapping);
+}
+
+/// The background alpha and blur `fromTraits` picks.
 const Translucency = struct {
     alpha: f64,
     size: u32,
     passes: u32,
 
-    /// The lowest alpha in range at which the strongest blur in range reads, then the least
-    /// blur reading at it. If none reads within range: the highest alpha, with the strongest
-    /// blur when that alpha is still see-through, else the weakest.
-    fn pick(image: kosm.Image, window: kosm.Image.Window, options: ImageOptions) kosm.Image.Error!Translucency {
-        const strongest = try readableAt(image, window, options, 1);
-        if (strongest.alpha > options.alpha.max) {
-            const strength: f64 = if (options.alpha.max < 1) 1 else 0;
-            var fallback = blurAt(options, strength);
-            fallback.alpha = options.alpha.max;
+    /// The alpha `mapping.alpha` gives, with the least blur in range at which text reads at
+    /// it. If none does: the alpha at which the strongest blur reads, at most the range's max,
+    /// with that blur while it is still see-through, else none.
+    fn pick(traits: kosm.Traits, mapping: Mapping) Translucency {
+        const target = mapping.alpha.at(traits);
+        const strongest = readableAt(traits, mapping, 1);
+        if (strongest.alpha > target) {
+            const alpha = @min(strongest.alpha, mapping.alpha.range.max);
+            var fallback = blurAt(mapping, if (alpha < 1) 1 else 0);
+            fallback.alpha = alpha;
             return fallback;
         }
-        const target = @max(strongest.alpha, options.alpha.min);
-        var weakest = try readableAt(image, window, options, 0);
+        var weakest = readableAt(traits, mapping, 0);
         if (weakest.alpha <= target) {
             weakest.alpha = target;
             return weakest;
@@ -112,84 +112,124 @@ const Translucency = struct {
         var passing: f64 = 1;
         for (0..blur_search_steps) |_| {
             const middle = (failing + passing) / 2;
-            if ((try readableAt(image, window, options, middle)).alpha <= target) passing = middle else failing = middle;
+            if (readableAt(traits, mapping, middle).alpha <= target) passing = middle else failing = middle;
         }
-        var picked = blurAt(options, passing);
+        var picked = blurAt(mapping, passing);
         picked.alpha = target;
         return picked;
     }
 
     /// The blur `strength` (0..1) of the way through both blur ranges, with its readable alpha.
-    fn readableAt(image: kosm.Image, window: kosm.Image.Window, options: ImageOptions, strength: f64) kosm.Image.Error!Translucency {
-        var blurred = window;
-        var result = blurAt(options, strength);
-        blurred.blur = blurSpread(result.size, result.passes);
-        result.alpha = try image.readableAlpha(blurred, options.colors.traits.reading);
+    fn readableAt(traits: kosm.Traits, mapping: Mapping, strength: f64) Translucency {
+        var result = blurAt(mapping, strength);
+        result.alpha = traits.readability.alphaAt(blurSpread(result.size, result.passes));
         return result;
     }
 
-    fn blurAt(options: ImageOptions, strength: f64) Translucency {
-        return .{ .alpha = 1, .size = options.blur_size.wholeAt(strength), .passes = options.blur_passes.wholeAt(strength) };
+    fn blurAt(mapping: Mapping, strength: f64) Translucency {
+        return .{ .alpha = 1, .size = mapping.blur_size.wholeAt(strength), .passes = mapping.blur_passes.wholeAt(strength) };
     }
 };
 
 const std = @import("std");
 const testing = std.testing;
 
-/// A loaded image of one gray, `side` pixels square, or noise around it when `noisy`.
-fn testImage(comptime side: usize, lightness: f64, noisy: bool) kosm.Image {
+/// The default look in a theme carrying `traits`.
+fn wornWith(traits: kosm.Traits, mapping: Mapping) Look {
+    var input = default.theme.input;
+    input.traits = traits;
+    return default.fromTraits(.from(input), mapping);
+}
+
+/// Readability reading at every blur, at this alpha.
+fn readableEverywhere(alpha: f64) kosm.Traits.Readability {
+    return .{ .alphas = @splat(alpha) };
+}
+
+test "a crisp picture gets square corners, and a soft blurry one round corners and roomy padding" {
+    const crisp = wornWith(.{ .softness = 0, .blurriness = 0 }, .{});
+    try testing.expectEqual(0, crisp.values.rounding.?);
+    try testing.expectEqual(4, crisp.values.rounding_power.?);
+    try testing.expectEqual(3, crisp.values.border_size.?);
+    const soft = wornWith(.{ .softness = 1, .blurriness = 1 }, .{});
+    try testing.expectEqual(16, soft.values.rounding.?);
+    try testing.expectEqual(2, soft.values.rounding_power.?);
+    try testing.expectEqual(14, soft.values.padding.?);
+    try testing.expectEqual(13, soft.fonts.size);
+}
+
+test "a picture that glows gets a glow in its glow's color, and one that does not gets none" {
+    const neon = kosm.hex("ff00cc");
+    const glowing = wornWith(.{ .glow = 1, .glow_color = neon }, .{});
+    try testing.expectEqual(15, glowing.values.glow.range.?);
+    try testing.expectEqual(neon, glowing.values.glow.color.?.color);
+    const dull = wornWith(.{ .glow = 0 }, .{});
+    try testing.expectEqual(0, dull.values.glow.range.?);
+    try testing.expectEqual(null, dull.values.glow.color);
+    const own_color = wornWith(.{ .glow = 1, .glow_color = neon }, .{ .glow_color = false });
+    try testing.expectEqual(null, own_color.values.glow.color);
+}
+
+test "alpha follows its rule while text reads, with the least blur reading at it" {
+    const calm = wornWith(.{ .readability = readableEverywhere(0.3) }, .{});
+    try testing.expectApproxEqAbs(0.8, calm.theme.background_alpha, 1e-12);
+    try testing.expectEqual(0, calm.values.blur.size.?);
+    var readability: kosm.Traits.Readability = .{ .alphas = .{ 1, 0.95, 0.9, 0.7, 0.5 } };
+    const busy = wornWith(.{ .detail = 0.5, .readability = readability }, .{});
+    try testing.expectApproxEqAbs(0.9, busy.theme.background_alpha, 1e-12);
+    try testing.expect(busy.values.blur.size.? > 0 and busy.values.blur.size.? < 10);
+    readability.alphas = @splat(0.95);
+    const unreadable = wornWith(.{ .readability = readability }, .{});
+    try testing.expectApproxEqAbs(0.95, unreadable.theme.background_alpha, 1e-12);
+    try testing.expectEqual(10, unreadable.values.blur.size.?);
+}
+
+test "readability raises alpha at most to the range's max, opaque then needing no blur" {
+    const look = wornWith(.{}, .{});
+    try testing.expectEqual(1, look.theme.background_alpha);
+    try testing.expectEqual(0, look.values.blur.size.?);
+    var pinned: Mapping = .{};
+    pinned.alpha.range = .{ .min = 0.7, .max = 0.9 };
+    try testing.expectEqual(0.9, wornWith(.{}, pinned).theme.background_alpha);
+}
+
+test "a pinned range pins its value, and a curve bends it" {
+    var mapping: Mapping = .{};
+    mapping.rounding.range = .{ .min = 7, .max = 7 };
+    try testing.expectEqual(7, wornWith(.{ .softness = 1 }, mapping).values.rounding.?);
+    mapping = .{};
+    mapping.rounding.curve = kosm.Curve.ease_out_expo.bezier;
+    try testing.expect(wornWith(.{ .softness = 0.25, .blurriness = 0.25 }, mapping).values.rounding.? > 8);
+}
+
+test "a theme without traits keeps the look's values" {
+    var look = default;
+    look.values.blur.enabled = true;
+    const worn = look.fromTraits(default.theme, .{});
+    try testing.expectEqual(0, worn.values.rounding.?);
+    try testing.expectEqual(null, worn.values.blur.size);
+    try testing.expectEqual(true, worn.values.blur.enabled);
+}
+
+/// A loaded image of one gray, `side` pixels square.
+fn testImage(comptime side: usize, lightness: f64) kosm.Image {
     const State = struct {
         var pixels: [side * side]kosm.Color = undefined;
         var planes: [side * side]f32 = undefined;
     };
-    var random: std.Random.DefaultPrng = .init(3);
     for (&State.pixels, &State.planes) |*pixel, *plane| {
-        const value = if (noisy) random.random().float(f64) else lightness;
-        pixel.* = .{ .lightness = value, .chroma = 0, .hue = 0 };
-        plane.* = @floatCast(value);
+        pixel.* = .{ .lightness = lightness, .chroma = 0, .hue = 0 };
+        plane.* = @floatCast(lightness);
     }
     return .{ .path = "/test.png", .pixels = &State.pixels, .width = side, .lightness = &State.planes, .lightness_width = side };
 }
 
-test "a calm, soft image gives the least alpha, no blur, round corners and wide gaps" {
-    const look = try default.fromImage(testImage(32, 0.2, false), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 32 } } } });
-    try testing.expectEqual(0.6, look.theme.background_alpha);
-    try testing.expectEqual(0, look.values.blur.size.?);
-    try testing.expectEqual(16, look.values.rounding.?);
-    try testing.expectEqual(2, look.values.rounding_power.?);
-    try testing.expectEqual(6, look.values.gaps.inner.?);
-    try testing.expectEqual(12, look.values.gaps.outer.?);
-    try testing.expectEqual(1, look.values.border_size.?);
-    try testing.expectEqual(13, look.fonts.size);
-}
-
-test "a busy image blurs as much as needed and narrows the gaps" {
-    const look = try default.fromImage(testImage(64, 0, true), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 64, .text_size = 4 } } } });
-    try testing.expect(look.values.blur.size.? > 0);
-    try testing.expectEqual(2, look.values.gaps.inner.?);
-    try testing.expectEqual(4, look.values.gaps.outer.?);
-    try testing.expect(look.theme.background_alpha >= 0.6 and look.theme.background_alpha <= 1);
-}
-
-test "a pinned range pins its value" {
-    const look = try default.fromImage(testImage(64, 0, true), .{
-        .colors = .{ .traits = .{ .reading = .{ .screen_width = 64 } } },
-        .alpha = .{ .min = 1, .max = 1 },
-        .rounding = .{ .min = 7, .max = 7 },
-    });
-    try testing.expectEqual(1, look.theme.background_alpha);
-    try testing.expectEqual(0, look.values.blur.size.?);
-    try testing.expectEqual(7, look.values.rounding.?);
-}
-
-test "an image kosm did not load gives no look" {
-    try testing.expectError(error.ImageNotLoaded, default.fromImage(.{ .path = "/a.png" }, .{}));
-}
-
-test "a look from an image keeps the look's blur on, even when it picks no blur" {
+test "a look from an image wears its colors and derives its values from its traits" {
     var look = default;
     look.values.blur.enabled = true;
-    const result = try look.fromImage(testImage(32, 0.2, false), .{ .colors = .{ .traits = .{ .reading = .{ .screen_width = 32 } } } });
+    const result = try look.fromImage(testImage(32, 0.2), .{ .traits = .{ .reading = .{ .screen_width = 32 } } }, .{});
+    try testing.expect(result.theme.traits != null);
+    try testing.expect(result.theme.background_alpha < 1);
     try testing.expectEqual(true, result.values.blur.enabled);
-    try testing.expectEqual(0, result.values.blur.size);
+    try testing.expectError(error.ImageNotLoaded, default.fromImage(.{ .path = "/a.png" }, .{}, .{}));
 }

@@ -110,23 +110,33 @@ A look with no family hands out only the sizes, so each program keeps its own fo
 | `values` | the shared values below; default: none set |
 | `tweak` | `fn (base: *Base, look: Look) void`, run last to change single apps; null: none |
 
-## A look from an image
+## A look from traits
 
-`look.fromImage(image, options)` wears `look` in colors taken from `image` (a `kosm.Image` in the
-kosmos' `Params`) and derives its translucency and shared values from the picture, each within a
-range of `base.ImageOptions` (a range of `n..n` pins the value). Fonts, tweak and every value it
-does not derive stay the look's; assign any value afterwards to override it.
+A theme taken from an image carries the image's traits (`kosm.Traits`: how busy, soft, glowing,
+flat, blurry it is, and how opaque a window must be at each blur for text to read).
+`look.fromTraits(theme, mapping)` wears `look` in that theme and derives its translucency and
+shared values from the traits; `look.fromImage(image, options, mapping)` does the same with the
+theme taken from `image` (a `kosm.Image` in the kosmos' `Params`) as `options`
+(`kosm.Image.Options`) says. A theme without traits keeps the look's values. Fonts, tweak and
+every value not derived stay the look's; assign any value afterwards to override it.
 
-| Option | Derived value, default range |
+Each value of `base.Mapping` is a `Rule`: the traits in `from` (a `Mix`, one optional
+`Contributor` per trait with its `weight` and the trait values `low` and `high` its part rises
+between, `Mapping.rising` or `Mapping.falling`) averaged by weight, bent by `curve` (a
+`kosm.Curve.Bezier`, straight by default) and placed within `range` (`n..n` pins the value).
+
+| Field | Derived value, default mix and range |
 |---|---|
-| `colors` | how colors are taken, and the picture measured in its `traits` (`kosm.Image.Options`) |
-| `alpha` | the theme's `background_alpha`: the lowest at which some blur in range keeps text readable; 0.6..1 |
-| `blur_size`, `blur_passes` | `blur`: the least that keeps text readable at that alpha; 0..10 and 2..4 |
-| `rounding`, `rounding_power` | rounder and nearer a circle for softer pictures; 4..16 and 2..4 |
+| `alpha` | the theme's `background_alpha`: higher for busy, lower for flat or blurry pictures, 0.6..1; raised, at most to the max, until text reads at the strongest blur in range |
+| `blur_size`, `blur_passes` | ranges, not rules: the least blur at which text reads at that alpha; 0..10 and 2..4 |
+| `rounding` | rounder for softer and blurrier pictures, square for crisp ones; 0..16 |
+| `rounding_power` | nearer a square for crisper pictures, 2 a circle; 2..4 |
 | `gaps_inner`, `gaps_outer` | smaller for busier pictures; 2..6 and 4..12 |
 | `border_size` | thinner for softer pictures; 1..3 |
 | `padding` | roomier for softer pictures; 6..14 |
 | `shadow_range`, `shadow_render_power` | wider and slower to fade for softer pictures; 4..20 and 2..4 |
+| `glow_range`, `glow_render_power` | wider and slower to fade the more the picture glows, 0 turning it off; 0..15 and 2..4 |
+| `glow_color` | `bool`: the glow takes the color of what glows in the picture; default true |
 
 ## Shared values
 

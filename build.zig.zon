@@ -165,7 +165,7 @@
         "Fonts.zig",
         "Look.zig",
         "Values.zig",
-        "ImageOptions.zig",
+        "Mapping.zig",
         "README.md",
     },
 }
