@@ -5,12 +5,12 @@
     .minimum_zig_version = "0.17.0",
     .dependencies = .{
         .kosm_counter_strike = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike?ref=master#a6f54353f2d0f6d954f55caea0e6138b2d745dd8",
-            .hash = "kosm_counter_strike-0.0.0-Aru-facyAABv2S-50cJl-2aBq_kyMTFu1th61_uKUYci",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike?ref=master#1c65f0161fe01e3d0843c36826999c49ef8025f7",
+            .hash = "kosm_counter_strike-0.0.0-Aru-faQzAAAQZ5Bz1d9TlwLnqLUx4jm-_YrSYAwwRmgC",
         },
         .kosm_counter_strike_2 = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike_2?ref=master#a5cab85484f10820ab972ea038cb420aa2f00da1",
-            .hash = "kosm_counter_strike_2-0.0.0-bRygTIkeAABfgIKj27mLng17P9c0cwVfY0W8xRU8U_ZK",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_counter_strike_2?ref=master#e7dbad7289fbd813d49beccc85f5417470eb6b02",
+            .hash = "kosm_counter_strike_2-0.0.0-bRygTIYfAABDfgT-LRhwwMVqPiAk6-Xu6fbpFPxPQZoX",
         },
         .kosm_xml = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_xml?ref=master#3cc609a6ef0efebe41cea7fcb08934fe9619ec18",
@@ -25,8 +25,8 @@
             .hash = "kosm_toml-0.0.0-BgmamBfgAABKTg0Hg88vysOK58Mv6msl43HNa8HH1dBr",
         },
         .kosm_lua = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_lua?ref=master#18348ecf02d053ad7a81e2c42be4c0a72cf87240",
-            .hash = "kosm_lua-0.0.0-lA6UWMcXBAD5ay1hrUys4Y9YGNHJlXOpT_G8d1pqEWTV",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_lua?ref=master#ac851ddd859d68ed03601feb0baf38e5271b1363",
+            .hash = "kosm_lua-0.0.0-lA6UWHJWBADrgO9dCFC7v7_T8GW_It5LUDFXs2y4sFfi",
         },
         .kosm_keyvalues = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_keyvalues?ref=master#006530cc8d96b0b68a950731b9ce6462e6f250d7",
@@ -45,36 +45,36 @@
             .hash = "kosm_css-0.0.0-oGvx3AUZAAD5QXRdG58BRc_U1OoJPn9LDE83J4TjAIfF",
         },
         .kosm_zen = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#e78babedafd8a15ae4e3ed2397021db6e88f229b",
-            .hash = "kosm_zen-0.0.0-PJSR5IOBAQAh4-FvQBItSrATxZDoVuAzZ_c-1SjdKou9",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_zen?ref=master#af145ff23345b3d9f966c3dd913835c7e22bf13d",
+            .hash = "kosm_zen-0.0.0-PJSR5I6CAQB755NCDAm0J9jszKfIfTwmeMjo_UxugHTN",
         },
         .kosm_wlr_which_key = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_wlr_which_key?ref=master#03c79faa490b23ffb58eb53b5ad87e7d3163f065",
-            .hash = "kosm_wlr_which_key-0.0.0-x7N1FAUcAADGfQyGeY9vOkk_OaUWTULf_-Qe3e6A24kq",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_wlr_which_key?ref=master#f5d7be10359704760b1fc30df42a7279be149953",
+            .hash = "kosm_wlr_which_key-0.0.0-x7N1FCodAACFTvTIRDfxN4EV_1gNKY_DcLS0K2psQzBd",
         },
         .kosm_vicinae = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#fb24700e527a4f55d73c29f1990cc1947ffc46e8",
-            .hash = "kosm_vicinae-0.0.0-xyIR2KfbAABVGcuYwNI26wz7gY4YBiWZWHzvzl2PFrH-",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_vicinae?ref=master#25bd0e84e21d6fdf2fb4441b9daa0b30495eaf1d",
+            .hash = "kosm_vicinae-0.0.0-xyIR2K7cAABM-Ec7xTa12QfU5ugkiT6xDzgA8It3b0_C",
         },
         .kosm_tuios = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_tuios?ref=master#9925f231c1897d9042617db52abca9ee3ef4eda5",
-            .hash = "kosm_tuios-0.0.0-riZo3rQ1AADLc9XgTHN60V6k02x7LhclQ_KWIgle24Iw",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_tuios?ref=master#d7330e6c3b50464de434adbd7421abe169ef63b5",
+            .hash = "kosm_tuios-0.0.0-riZo3rE2AAASlonq4H9Kf5CPPh0Pm4o0yYwyhQiZSG-U",
         },
         .kosm_qtct = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_qtct?ref=master#a396114944c287e817103c8f37e45b82d73b1db1",
-            .hash = "kosm_qtct-0.0.0-7kQIaTNtAAB3yTR-SuExxGhgQNAKAC-EbIgG8Mb5DISp",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_qtct?ref=master#d43cacba9419899c2d83e3aebe6a221921466693",
+            .hash = "kosm_qtct-0.0.0-7kQIaf9vAACuhmCnZhpD6U4TQHRIJZO9au0qLBVXN--O",
         },
         .kosm_ohmyposh = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ohmyposh?ref=master#3108d74dd4c8d1142b06aae2279e5ec37f0de08a",
-            .hash = "kosm_ohmyposh-0.0.0-asUeM3xtAABf8fYp1Cuw3d0a6VexnA0a8XakZFibyDUL",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ohmyposh?ref=master#6003965ebb70fc93137cea67bd18e27944aaae78",
+            .hash = "kosm_ohmyposh-0.0.0-asUeM5JuAADOCnL2BOUhXJjKqZC6DKQ7vZ-bWGmMgSKJ",
         },
         .kosm_nvim = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_nvim?ref=master#a48e2577e7dd3e5298a567067a71f010392a0c36",
-            .hash = "kosm_nvim-0.0.0-ULPOKDvwAABbKeykts2YLuDSLQGyq2N7DrfmIHZjUlHn",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_nvim?ref=master#39ed97e16740f5562a7de7a5bf5b0e5fe38c31d4",
+            .hash = "kosm_nvim-0.0.0-ULPOKDfxAAB1K5HzpdqN-LKrvZW8TNTDLO2UKOW7cP3v",
         },
         .kosm_kitty = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kitty?ref=master#b190e42699876627b6d15e0ef4c7c399235fe657",
-            .hash = "kosm_kitty-0.0.0-gr3WQmYwAgCFVsmbBgIgwKNHQWtWDcslnb-DxdT9nErb",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kitty?ref=master#faaf44ce9b3d4a5bc69902d2dfcf76c5e3ee812a",
+            .hash = "kosm_kitty-0.0.0-gr3WQp82AgDHM0p_EfrdBPXi-ya9Lf5lRSyW7D1YQfXJ",
         },
         .kosm_kde = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_kde?ref=master#62f800b28f80a849c92385e513d3b77110c31181",
@@ -89,8 +89,8 @@
             .hash = "kosm_cursor-0.0.0-0YTWcSYDAQAxk4pyT3xQFHD4cO5ag7D4Z58EHzrFw2Su",
         },
         .kosm_hyprpaper = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprpaper?ref=master#b9a62df7781c8290f35f12ad3397ee8262b957ef",
-            .hash = "kosm_hyprpaper-0.0.0-X_TVW4hLAAAYm8YKZaY12L9R7r-MS_9M4_rXnCbaOgKP",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprpaper?ref=master#7ebab2cab9480b9ff72ea7cf28dae1d39956276e",
+            .hash = "kosm_hyprpaper-0.0.0-X_TVW5lMAACrUo9JVvjTs6ssFka9uBsxo4Eef8XFtYzN",
         },
         .kosm_hyprlang = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprlang?ref=master#fe6b1b9ec6ac1cb93cbb812731bd9351bb809e0e",
@@ -101,60 +101,60 @@
             .hash = "kosm_hyprtoolkit-0.0.0-31tEkEIlAAB6JV7NUbKGyu0t8hlC0tuhSAs5R8O3uyiQ",
         },
         .kosm_hyprmouse = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprmouse?ref=master#5157ee9c21ed9b19f7151b7377ff7021c6d5b36c",
-            .hash = "kosm_hyprmouse-0.0.0-wK1Xw4AcAACOMGt-HNqvwc2mUqsvVnMEDd2sLI-uqktz",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprmouse?ref=master#bc19d21dc9b23ee1876da12f2fc1553aec1ec203",
+            .hash = "kosm_hyprmouse-0.0.0-wK1Xw5EdAABH-N-zDW9dlxMmjG8nKnjCauzRhbzVd6tT",
         },
         .kosm_hyprland = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprland?ref=master#f85b772c2c3bdd9fb7ae36e96481211933012887",
-            .hash = "kosm_hyprland-0.0.0-C-yls_hJAwDDRJgB3MkOBmzKR7T4f42q-76Oq7WPpkTb",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_hyprland?ref=master#42ff139f2e9c74233cdc7572cc96e91ac24baff2",
+            .hash = "kosm_hyprland-0.0.0-C-yls0VQAwD7JgR-UyU31ZBEqW2_lJJ1UNNHYO-CSy55",
         },
         .kosm_gtk = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_gtk?ref=master#e728f67f08dae8bbe7e460c3a180b771dd40188a",
             .hash = "kosm_gtk-0.0.0-4gGwZq_TAADBrxb85Q9MvpnhsPbUamBhYq3m5bd5-Cei",
         },
         .kosm_ghostty = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ghostty?ref=master#6ee52f7e6dca9016ebc5c1cd936bdff348054d3a",
-            .hash = "kosm_ghostty-0.0.0-l99CQa9rAgBaf6N9cM9hnYY7LagaZCD7q5y2ldZJAcWF",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_ghostty?ref=master#cf59f0632f9e7fa0f00d629e2a83b5e9619f954a",
+            .hash = "kosm_ghostty-0.0.0-l99CQTtyAgD2KFEyrTCDjwQMQOoPqxMHPhinrMA3ASgg",
         },
         .kosm_foot = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_foot?ref=master#8638ac8ba53f576f7f35848470e82e4c6e4541c0",
-            .hash = "kosm_foot-0.0.0-wAiGi3sLAQAU3agjB1asRqP6tBKS8KDtroCsNgypyTXO",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_foot?ref=master#6c34be891561dee03b10d47427adca49ab61881a",
+            .hash = "kosm_foot-0.0.0-wAiGi3wPAQBXD8AxBwGfC2mcBrb_7HFqS10ghCCRkkpv",
         },
         .kosm_fontconfig = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fontconfig?ref=master#bd18d0b9244cce4489c2a0233c4b28ccd189dd50",
             .hash = "kosm_fontconfig-0.0.0-rGFXaKgkAAAKVAewchTJg6C8yWZeQ0wjAXKOA3nFq4EN",
         },
         .kosm_equibop = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_equibop?ref=master#133ab8f2b0c1161bdcdba53a1498154d068e8cb4",
-            .hash = "kosm_equibop-0.0.0-5EztXXdBAABei51mj36rnI5jgqMBihKxmkZ0BLhA7h_v",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_equibop?ref=master#8f4736ef40231da3d0c8c9ba1058c063007e9de2",
+            .hash = "kosm_equibop-0.0.0-5EztXepJAABqBh-_clnTbZk1LyomTRC7haLH8iDdQ1iz",
         },
         .kosm_dunst = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#652fb9f81b2e37eb4a211364fbd3f975a4b84e86",
-            .hash = "kosm_dunst-0.0.0-bFXk7XeqAAAR5zF428y-l_5HvKuwn_EB9L8cGruCxrtJ",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_dunst?ref=master#f0432451069b33a7fc06a3da011625462ca29be8",
+            .hash = "kosm_dunst-0.0.0-bFXk7XSrAABygr5Mxl-axQCNpIDl7icKp-QtCnLjPBUT",
         },
         .kosm_firefox = .{
             .url = "git+https://git.nnstdios.com/ktisigonos/kosm_firefox?ref=master#4fb11f505550567fc1fb480b6061324d14275888",
             .hash = "kosm_firefox-0.0.0-UE8nmHlaBgDtUOyatAdsMB8_FJihNxWy-vf2ZU8IM-wu",
         },
         .kosm_blender = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#d48176bbd8eef9c0ecd80b92f59d6f157a0a3cb3",
-            .hash = "kosm_blender-0.0.0-_ubM3ImSAQB8AvC-L7k5iyDJUGaU2LeIhr0rzqVQXYq7",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_blender?ref=master#298298c21fd76748711c0952d7926a706a0cce36",
+            .hash = "kosm_blender-0.0.0-_ubM3JCTAQCdNSba5E_Di2-Tl6G5sI53aG6jMNJHnjTM",
         },
         .kosm_commet = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_commet?ref=master#1f4d4232f8039cd58cbe3d4b142bd4450e15db83",
-            .hash = "kosm_commet-0.0.0-lsxpUy5rAACI-OHzhAx2n8UmCEf-Yt7F89La7XoHUCNY",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_commet?ref=master#82fc9d55d6b47fbdd3ed914b254a3095b20d2308",
+            .hash = "kosm_commet-0.0.0-lsxpU3FvAAAtxIsk-4SX71-QpnT3w1q_fj0dFNZJM2sl",
         },
         .kosm_adwsteamgtk = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_adwsteamgtk?ref=master#6fe6c0d2c2e69e3d1fb360f2c11bd946b02af2b9",
-            .hash = "kosm_adwsteamgtk-0.0.0-_esE6oI7AACQzI3rnmmK95ARvvwohNO0Lb1XGD9wmDpC",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_adwsteamgtk?ref=master#be11817f64fb9b3734e905e339a0c4934f6a48d5",
+            .hash = "kosm_adwsteamgtk-0.0.0-_esE6q88AACfFQA29T9hvgHFaflBQfgaJX1Kk-q_Vv8E",
         },
         .kosm = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#7cac78ff369e4b85f732290cd4b415e35596c813",
-            .hash = "kosm-0.0.0-YCShsjJhGwChJLifPnNgdKvF6BvskAvM98V1N3cjOqMF",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm?ref=master#d00140fbc9fa4f739cd20dbbc48c01ffce7abcb1",
+            .hash = "kosm-0.0.0-YCShst2LHABjvZe3qRcG6GT7UxPnHqQYk4AOwKoAq0Kl",
         },
         .kosm_fastfetch = .{
-            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fastfetch?ref=master#3afe6f6783a9165f6e748e6c07458d8b95b02b08",
-            .hash = "kosm_fastfetch-0.0.0-8AG95RxaAAArbPuO4MrjsUXEK-aEMzLoDJsr-rDOwJT4",
+            .url = "git+https://git.nnstdios.com/ktisigonos/kosm_fastfetch?ref=master#d9d8bb22b14340546a37c9440dfa04647a8bfe1c",
+            .hash = "kosm_fastfetch-0.0.0-8AG95S1bAABFplxTh7yer9ogE1y-FnoBPSiDJBI0iUqI",
         },
     },
     .paths = .{
